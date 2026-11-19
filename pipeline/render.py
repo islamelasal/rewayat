@@ -218,6 +218,8 @@ def scene_clip(sc, out_path, preview=None):
     d = sc["end"] - sc["start"]
     if preview is not None:
         d = min(d, preview)
+    if sc.get("_pad"):
+        d += sc["_pad"]
     frames = max(int(round(d * FPS)), 2)
     img = sc["image"]
     kind = sc.get("motion", "slow_zoom_in")
@@ -309,20 +311,27 @@ def main():
     print("[i] معالجة الصوت (voice stem → music stem → ducking → mastering)...")
     wav = os.path.join(work, "mix.wav")
     import audio as audio_engine  # pipeline/audio.py
+    import sfx as sfx_engine      # pipeline/sfx.py
     audio_engine.build_voice_stem(scenes, total, wav + ".voice.wav")
     audio_engine.build_music_stem(scenes, total, wav + ".music.wav")
-    audio_engine.mix_and_master(wav + ".voice.wav", wav + ".music.wav", wav, total)
+    sfx_path = os.path.join(work, "sfx.wav")
+    sfx_engine.build(scenes, total, sfx_path)
+    audio_engine.mix_and_master(wav + ".voice.wav", wav + ".music.wav", wav, total,
+                                sfx_wav=sfx_path)
     os.remove(wav + ".voice.wav")
     os.remove(wav + ".music.wav")
     m = audio_engine.measure_loudness(wav)
     print(f"[i] الميكس: {float(m['input_i']):.1f} LUFS / {float(m['input_tp']):.1f} dBTP")
 
     # ---- رندر المشاهد
-    clips = []
+    XF = 0.65          # مدة الانتقال بين المشاهد
+    clips, rendered = [], []
     for i, sc in enumerate(scenes, 1):
         if sc["start"] >= total:
             break
         local = dict(sc)
+        if not args.preview:
+            local["_pad"] = XF      # هيتشال من الأخير بعد الحلقة
         if args.preview:
             local["end"] = min(local["end"], args.preview)
             if local["end"] - local["start"] < 0.4:
@@ -332,16 +341,34 @@ def main():
             print(f"[i] رندر مشهد {i}/{len(scenes)} ({local['end']-local['start']:.1f}s)")
             scene_clip(local, out, preview=args.preview)
         clips.append(out)
+        rendered.append(local)
 
-    # ---- دمج بانتقالات ناعمة (xfade)
-    print("[i] دمج المشاهد...")
-    listfile = os.path.join(work, "concat.txt")
-    with open(listfile, "w") as f:
-        for c in clips:
-            f.write(f"file '{os.path.abspath(c)}'\n")
+    if len(rendered) > 1:
+        rendered[-1]["_pad"] = 0.0      # الأخير مش محتاج مساحة انتقال
+
+    # ---- دمج بانتقالات ناعمة (xfade) بدل القطع الفاصل
+    print("[i] دمج المشاهد بانتقالات ناعمة...")
     concat = os.path.join(work, "video.mp4")
-    run([FF, "-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
-         "-i", listfile, "-c", "copy", concat])
+    if len(clips) == 1:
+        run([FF, "-hide_banner", "-loglevel", "error", "-y", "-i", clips[0],
+             "-c", "copy", concat])
+    else:
+        cmd = [FF, "-hide_banner", "-loglevel", "error", "-y"]
+        for c in clips:
+            cmd += ["-i", c]
+        # مدة كل مقطع بعد fades — نستخدم مدد المشاهد المحسوبة
+        durs = [min(sc["end"], total) - sc["start"] + sc.get("_pad", 0.0) for sc in rendered]
+        parts, prev = [], "0:v"
+        acc = durs[0]
+        for i in range(1, len(clips)):
+            out = f"vx{i}" if i < len(clips) - 1 else "vout"
+            parts.append(f"[{prev}][{i}:v]xfade=transition=fade:duration={XF}:"
+                         f"offset={max(acc - XF, 0):.3f}[{out}]")
+            prev = out
+            acc += durs[i] - XF
+        run(cmd + ["-filter_complex", ";".join(parts), "-map", f"[{prev}]",
+                   "-c:v", "libx264", "-preset", "veryfast", "-crf", "19",
+                   "-pix_fmt", "yuv420p", concat])
 
     # ---- burn subs + audio
     print("[i] حرق الترجمة والتجميع النهائي...")

@@ -234,6 +234,45 @@ def measure_loudness(path):
 
 
 
+
+def read(path, offset=0, count=None):
+    """يقرأ بلوك ستيريو (float32) من ملف صوتي — ذاكرة ثابتة مهما طال الملف."""
+    cmd = [FF, "-hide_banner", "-loglevel", "error", "-i", path]
+    if offset:
+        cmd += ["-ss", f"{offset/SR:.6f}"]
+    if count:
+        cmd += ["-t", f"{count/SR:.6f}"]
+    cmd += ["-ar", str(SR), "-ac", "2", "-f", "f32le", "-"]
+    r = subprocess.run(cmd, capture_output=True)
+    return np.frombuffer(r.stdout, dtype="<f4").reshape(-1, 2)
+
+
+def read_mono_env(path, hop):
+    """غلاف الطاقة (max لكل hop) للصوت المونو — بيتبني تدريجياً من غير تحميل كامل."""
+    cmd = [FF, "-hide_banner", "-loglevel", "error", "-i", path,
+           "-ar", str(SR), "-ac", "1", "-f", "s16le", "-"]
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    frames = []
+    CH = hop * 2000                     # ~2000 hops = 20 ثانية لكل دفعة
+    buf = b""
+    while True:
+        chunk = p.stdout.read(CH * 2)
+        if not chunk:
+            break
+        buf += chunk
+        usable = len(buf) // (hop * 2) * (hop * 2)
+        if usable:
+            a = np.frombuffer(buf[:usable], dtype="<i2").astype(np.float32) / 32768.0
+            frames.append(a.reshape(-1, hop).max(axis=1))
+            buf = buf[usable:]
+    if buf:
+        a = np.frombuffer(buf[: len(buf) // 2 * 2], dtype="<i2").astype(np.float32) / 32768.0
+        if len(a):
+            frames.append(np.array([a.max()]))
+    p.wait()
+    return np.concatenate(frames) if frames else np.zeros(1, dtype=np.float32)
+
+
 def true_peak_limit(x, ceiling_db=TRUE_PEAK, lookahead=0.005, release=0.120, hop=0.001):
     """
     ليمتر احترافي سريع (block-based):
@@ -276,7 +315,7 @@ def true_peak_limit(x, ceiling_db=TRUE_PEAK, lookahead=0.005, release=0.120, hop
     return np.clip(y, -ceiling, ceiling)
 
 
-def mix_and_master(voice_wav, music_wav, out_wav, total):
+def mix_and_master(voice_wav, music_wav, out_wav, total, sfx_wav=None):
     """
     الدمج النهائي بيتم في بايثون (مش فلتر ffmpeg) للأسباب دي:
       • تحكّم كامل في الستيريو: الموسيقى ستيريو حقيقي، الصوت مونو في الوسط
@@ -295,26 +334,12 @@ def mix_and_master(voice_wav, music_wav, out_wav, total):
     print(f"    voice {vr:.1f} dB RMS | music {mr:.1f} dB RMS | "
           f"music gain {music_gain:+.1f} dB (تحت الصوت بـ {MUSIC_UNDER_DB:.0f} dB)")
 
-    def read(path):
-        r = subprocess.run([FF, "-hide_banner", "-loglevel", "error", "-i", path,
-                            "-ar", str(SR), "-ac", "2", "-f", "f32le", "-"],
-                           capture_output=True)
-        return np.frombuffer(r.stdout, dtype="<f4").reshape(-1, 2)
+    # ── منحنى الـ ducking: بيتبني من الصوت بس (قراءة على بلوكات، ذاكرة ثابتة)
+    hop = int(0.01 * SR)
+    v_mono_env = read_mono_env(voice_wav, hop) * (10 ** (voice_gain / 20.0))
+    active = (v_mono_env > 0.02).astype(np.float64)      # فوق -34 dBFS = كلام
 
-    v = read(voice_wav) * (10 ** (voice_gain / 20.0))
-    mus = read(music_wav) * (10 ** (music_gain / 20.0))
-
-    n = min(len(v), len(mus))
-    v, mus = v[:n], mus[:n]
-
-    # ── منحنى الطاقة: كم المشهد فيه كلام فعلي
-    mono = np.abs(v).mean(axis=1)
-    hop = int(0.01 * SR)                       # دقة 10ms
-    k = n // hop
-    env = mono[:k * hop].reshape(k, hop).max(axis=1)
-    active = (env > 0.02).astype(np.float64)   # فوق -34 dBFS = كلام
-
-    # ── تنعيم هجوم/انفراج: 40ms هجوم، 700ms انفراج (راحة للأذن)
+    # تنعيم: هجوم 40ms / انفراج 700ms (متجهي — سريع وذاكرة قليلة)
     atk = np.exp(-1.0 / (0.040 * 100))
     rel = np.exp(-1.0 / (0.700 * 100))
     sm = np.empty_like(active)
@@ -323,27 +348,58 @@ def mix_and_master(voice_wav, music_wav, out_wav, total):
         c = atk if a > y else rel
         y = c * y + (1 - c) * a
         sm[i] = y
-    duck = (10 ** (-MUSIC_DUCK_DB / 20.0)) ** sm
-    duck_full = np.repeat(duck, hop)
-    if len(duck_full) < n:
-        duck_full = np.pad(duck_full, (0, n - len(duck_full)), mode="edge")
 
-    mus_ducked = mus * duck_full[:, None]
+    duck_m = (10 ** (-MUSIC_DUCK_DB / 20.0)) ** sm
+    duck_s = (10 ** (-7.0 / 20.0)) ** sm
 
-    mix = v + mus_ducked
-    # ليمتر ناعم: tanh على ما فوق الحد فقط (بيحافظ على النقاء)
-    peak = np.max(np.abs(mix)) or 1.0
-    ceiling = 10 ** (-1.5 / 20.0)
-    if peak > ceiling:
-        mix *= ceiling / peak
-    mix = np.tanh(mix * 1.02) * np.tanh(ceiling) / np.tanh(ceiling * 1.02)
-
-    np.clip(mix, -1, 1, out=mix)
+    # ── الدمج على بلوكات (32 ثانية) — الذاكرة تفضل ثابتة مهما طالت الحلقة
+    n = int(total * SR)
+    BLK = 32 * SR
+    sr_h = SR
     w = write_wav_open(out_wav, channels=2)
+    peak = 0.0
     try:
-        w.writeframes((mix * 32767).astype("<i2").tobytes())
+        for b0 in range(0, n, BLK):
+            b1 = min(b0 + BLK, n)
+            cnt = b1 - b0
+
+            seg_v = read(voice_wav, b0, cnt) * (10 ** (voice_gain / 20.0))
+            seg_m = read(music_wav, b0, cnt) * (10 ** (music_gain / 20.0))
+            seg_s = read(sfx_wav, b0, cnt) if sfx_wav and os.path.exists(sfx_wav) else None
+
+            h0 = b0 // hop
+            h1 = min(h0 + (cnt // hop) + 2, len(duck_m))
+            dm = np.repeat(duck_m[h0:h1], hop)[:cnt]
+            if len(dm) < cnt:
+                dm = np.pad(dm, (0, cnt - len(dm)), mode="edge")
+            ds = np.repeat(duck_s[h0:h1], hop)[:cnt]
+            if len(ds) < cnt:
+                ds = np.pad(ds, (0, cnt - len(ds)), mode="edge")
+
+            mix = seg_v + seg_m * dm[:, None]
+            if seg_s is not None:
+                mix += seg_s * ds[:, None]
+
+            peak = max(peak, float(np.max(np.abs(mix))))
+            w.writeframes((np.clip(mix, -1.0, 1.0) * 32767).astype("<i2").tobytes())
     finally:
         w.close()
+
+    # ليمتر ناعم بعد ما نعرف القمة الحقيقية (تمريرة تانية على بلوكات)
+    ceiling = 10 ** (TRUE_PEAK / 20.0)
+    if peak > ceiling:
+        g = ceiling / peak
+        tmp = out_wav + ".gain"
+        w2 = write_wav_open(tmp, channels=2)
+        try:
+            for b0 in range(0, n, BLK):
+                cnt = min(BLK, n - b0)
+                seg = read(out_wav, b0, cnt) * g
+                w2.writeframes((np.clip(seg, -1, 1) * 32767).astype("<i2").tobytes())
+        finally:
+            w2.close()
+        os.replace(tmp, out_wav)
+        print(f"    limiter: قمة {20*np.log10(peak):.2f} dBFS → gain {20*np.log10(g):+.2f} dB")
 
     # ماسترف نهائي: loudnorm مرتين (قياس ثم تطبيق)
     m2 = measure_loudness(out_wav)
