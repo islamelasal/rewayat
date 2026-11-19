@@ -49,19 +49,23 @@
     <table>
       <tr><td>المدة</td><td>14:33</td></tr>
       <tr><td>الإيقاع</td><td>~85 كلمة/دقيقة (راوي درامي)</td></tr>
-      <tr><td>الصوت</td><td>مُعاد تسويته: −18 dB متوسط (قياسي يوتيوب)</td></tr>
+      <tr><td>الصوت</td><td>ميكس احترافي: <b>−16 LUFS / −2.5 dBTP</b> · ستيريو · موسيقى تحت الكلام</td></tr>
+      <tr><td>خصوصية الصوت</td><td>سكوت −43 dBFS (درون نغمي) · بدون وشوشرة</td></tr>
     </table>
     <a class="btn btn-primary" href="rewayat-ep01-slow-complete.zip" download>
-      تحميل الحزمة الكاملة — 226 ميجا
+      تحميل الحزمة الكاملة — 232 ميجا
     </a>
-    <a class="btn btn-sec" href="rewayat-ep01-slow.mp4" download>تحميل MP4 فقط — 226 ميجا</a>
-    <video controls preload="metadata" src="rewayat-ep01-slow.mp4"></video>
+    <a class="btn btn-sec" href="rewayat-ep01-slow.mp4" download>تحميل MP4 فقط — 232 ميجا</a>
+    <video controls preload="metadata" poster="ثامبنيل-A-سطح.jpg" src="rewayat-ep01-slow.mp4"></video>
+    <div class="meta" style="margin-top:10px">عايز تسمع الصوت بس قبل ما تحمّل 232 ميجا؟
+      <a href="عينة-صوت.mp3" style="color:var(--gold)">عيّنة 70 ثانية (MP3)</a> — من مشهد الملحمة.
+    </div>
   </div>
 
   <div class="card">
     <h2>📦 محتوى الحزمة</h2>
     <ul class="files">
-      <li>rewayat-ep01-slow.mp4 <span>14:33 · 1080p</span></li>
+      <li>ساعة-الرمادي-الحلقة-1.mp4 <span>14:33 · 1080p · ستيريو</span></li>
       <li>ثامبنيل-A.jpg <span>1280×720</span></li>
       <li>ثامبنيل-B.jpg <span>1280×720</span></li>
       <li>فصول-يوتيوب.txt <span>تايم كود (11 فصل)</span></li>
@@ -84,6 +88,19 @@
       <tr><td>11:48</td><td>الراجل اللي على الباب</td></tr>
       <tr><td>13:04</td><td>خط ذهبي</td></tr>
     </table>
+  </div>
+
+  <div class="card">
+    <h2>🎚️ إيه اللي اتغيّر في الصوت؟</h2>
+    <table>
+      <tr><td>الشريط الصوتي القديم</td><td>نويز أبيض مُرشّح + نقرات = وشوشرة</td></tr>
+      <tr><td>الشريط الجديد</td><td>3 مسارات نغمية (درون/باد/نبض) — مفيش نويز خالص</td></tr>
+      <tr><td>الاتساع</td><td>ستيريو حقيقي (Haas 14ms) ← كان مونو</td></tr>
+      <tr><td>الموسيقى</td><td>منخفضة 13dB تحت الصوت، وبتنزل 11dB وقت الكلام (sidechain)</td></tr>
+      <tr><td>الصوت البشري</td><td>highpass 85Hz · قطع 260Hz · رفع 3.2kHz · ضغط 3:1</td></tr>
+      <tr><td>الماسترف</td><td>EBU R128: −16 LUFS · −1.5 dBTP · LRA 11</td></tr>
+    </table>
+    <div class="meta" style="margin-top:12px">كل ده بيحصل محلياً في <code>pipeline/audio.py</code> — مفيش أي خدمة خارجية.</div>
   </div>
 
   <div class="note">

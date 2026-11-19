@@ -233,6 +233,49 @@ def measure_loudness(path):
     return json.loads(j)
 
 
+
+def true_peak_limit(x, ceiling_db=TRUE_PEAK, lookahead=0.005, release=0.120, hop=0.001):
+    """
+    ليمتر احترافي سريع (block-based):
+      • بيحسب الذروة على شبكة 1ms مع lookahead 5ms (بيشوف الذروة قبلها)
+      • انفراج 120ms (one-pole) ورفع الغين بخطّي بين النقاط
+      • يضمن إن مفيش عيّنة تتعدى السقف → مفيش clipping ولا DAC overs
+    """
+    n = len(x)
+    H = max(1, int(hop * SR))
+    k = n // H
+    mag = np.abs(x)
+    if mag.ndim == 2:
+        mag = mag.max(axis=1)
+    peak = mag[:k * H].reshape(k, H).max(axis=1)
+
+    la = max(1, int(lookahead / hop))            # 5 بلوكات
+    # الذروة القادمة خلال نافذة الـ lookahead
+    fut = np.empty(k)
+    for j in range(k):
+        fut[j] = peak[j:j + la].max()
+
+    ceiling = 10 ** (ceiling_db / 20.0)
+    need = np.minimum(1.0, ceiling / np.maximum(fut, 1e-9))
+
+    # انفراج one-pole على شبكة الـ hop (هجوم فوري)
+    rel_c = np.exp(-hop / release)
+    g = np.empty(k)
+    cur = 1.0
+    for j in range(k):
+        t = need[j]
+        cur = t if t < cur else rel_c * cur + (1 - rel_c) * t
+        g[j] = cur
+
+    # رفع الغين لكل عيّنة (خطّي داخل كل بلوك)
+    g_full = np.repeat(g, H)
+    if len(g_full) < n:
+        g_full = np.pad(g_full, (0, n - len(g_full)), mode="edge")
+
+    y = x * (g_full[:, None] if x.ndim == 2 else g_full)
+    return np.clip(y, -ceiling, ceiling)
+
+
 def mix_and_master(voice_wav, music_wav, out_wav, total):
     """
     الدمج النهائي بيتم في بايثون (مش فلتر ffmpeg) للأسباب دي:
@@ -310,10 +353,23 @@ def mix_and_master(voice_wav, music_wav, out_wav, total):
          f"loudnorm=I={VOICE_LEVEL}:TP={TRUE_PEAK}:LRA=11:"
          f"measured_I={m2['input_i']}:measured_TP={m2['input_tp']}:"
          f"measured_LRA={m2['input_lra']}:measured_thresh={m2['input_thresh']}:"
-         f"offset={m2['target_offset']}:linear=true,"
-         f"alimiter=limit=0.84:attack=5:release=80:level=disabled",
+         f"offset={m2['target_offset']}:linear=true",
          "-ar", str(SR), "-ac", "2", "-c:a", "pcm_s24le", "-f", "wav", out_wav + ".tmp"],
         check=True)
+
+    # ليمتر نهائي في بايثون — يضمن السقف على كل عيّنة (الليمتر بتاع ffmpeg بيعدّي)
+    y = read(out_wav + ".tmp")
+    pk = float(np.max(np.abs(y)))
+    if pk > 10 ** (TRUE_PEAK / 20.0):
+        y = true_peak_limit(y)
+        w = write_wav_open(out_wav + ".tmp2", channels=2)
+        try:
+            w.writeframes((np.clip(y, -1, 1) * 32767).astype("<i2").tobytes())
+        finally:
+            w.close()
+        os.replace(out_wav + ".tmp2", out_wav + ".tmp")
+        print(f"    limiter: قمة {20*np.log10(pk):.2f} dBFS → "
+              f"{20*np.log10(np.max(np.abs(y))):.2f} dBFS")
     os.replace(out_wav + ".tmp", out_wav)
 
 
