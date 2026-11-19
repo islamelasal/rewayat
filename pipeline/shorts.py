@@ -21,9 +21,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # (اسم, بداية, نهاية, كابشن الكوفر, نص فوق الكوفر)
 DEFAULT_SHORTS = [
-    ("01-هوك",       7.20,  57.2,  "الملحمة بدأت",        "سمع كلمة واحدة في الراديو\nوخلاص"),
-    ("02-الملحمة",  539.0, 599.0,  "مئات وقفوا",          "مئات الناس وقفوا\nوما حدش اتكلم"),
-    ("03-خط-ذهبي",  784.0, 844.0,  "أول مرة السما تتشقّق", "أول مرة السما\nتتشقّق"),
+    ("01-هوك",       7.20,  57.2,  "الملحمة بدأت", "سمع كلمة واحدة في الراديو",
+     "assets/images/ep01/scene-01.png"),
+    ("02-الملحمة",  539.0, 599.0,  "مئات وقفوا",   "وما حدش اتكلم",
+     "assets/images/ep01/scene-07.png"),
+    ("03-خط-ذهبي",  784.0, 844.0,  "السما تتشقّق", "أول مرة",
+     "assets/images/ep01/scene-10.png"),
 ]
 
 
@@ -88,12 +91,9 @@ def make_short(src, ass, start, dur, out, workdir):
     return out
 
 
-def make_cover(short_name, caption, kicker, src_video, at_sec, out_jpg, workdir):
-    """كوفر 1080x1920: فريم من الشورت + تدرّج + نص عربي (نفس محرك الثامبنيل)."""
-    frame = os.path.join(workdir, f"cover-{short_name}.png")
-    subprocess.run([FF, "-hide_banner", "-loglevel", "error", "-y",
-                    "-ss", f"{at_sec:.2f}", "-i", src_video, "-frames:v", "1",
-                    frame], check=True)
+def make_cover(short_name, caption, kicker, src_image, out_jpg, workdir):
+    """كوفر 1080x1920 من **صورة المشهد الأصلية** (نظيفة، بدون ترجمة محروقة)."""
+    frame = src_image
     # نستخدم make_thumb.py لتوليد النص العربي بشكل صحيح
     subprocess.run([sys.executable, os.path.join(ROOT, "pipeline", "make_thumb.py"),
                     "--image", frame, "--title", caption, "--kicker", kicker,
@@ -114,7 +114,7 @@ def main():
 
     total = ffprobe_dur(a.video)
     made = []
-    for name, s, e, cap, kick in DEFAULT_SHORTS:
+    for name, s, e, cap, kick, image in DEFAULT_SHORTS:
         # اقصّر المدة لو النهاية تعدّي الفيديو
         dur = min(e, total - 0.5) - s
         if dur < 12:
@@ -124,7 +124,7 @@ def main():
         print(f"[i] شورت {name}: {s:.0f}s → {s+dur:.0f}s ({dur:.0f}s)")
         make_short(a.video, a.ass, s, dur, out, a.workdir)
         cover = os.path.join(a.outdir, f"{name}-كوفر.jpg")
-        make_cover(name, cap, kick, out, min(6.0, dur / 3), cover, a.workdir)
+        make_cover(name, cap, kick, os.path.join(ROOT, image), cover, a.workdir)
         made.append((name, out, cover, dur))
 
     print("\n[✓] خلص:")

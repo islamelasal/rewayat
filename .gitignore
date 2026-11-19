@@ -24,3 +24,5 @@ output/dl/*.zip
 output/dl/*.mp3
 output/dl/*.jpg
 output/dl/*.mp3
+output/dl/shorts/*.mp4
+output/dl/shorts/*.jpg
