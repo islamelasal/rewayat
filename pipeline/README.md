@@ -17,6 +17,24 @@ python3 pipeline/render.py episodes/01-الرمادي/scenes.json \
   --out output/preview.mp4 --preview 15
 ```
 
+### ضبط سرعة الإيقاع (مهم)
+
+التعليق الصوتي المولَّد بيطلع سريع (~115 كلمة/دقيقة). الإيقاع الدرامي المطلوب **85–95**.
+لتصحيحه:
+
+```bash
+python3 pipeline/retime.py episodes/01-الرمادي/scenes.json --tempo 0.86
+# → ينشئ assets/audio/ep01/retimed/ و episodes/01-الرمادي/scenes-slow.json
+```
+
+`retime.py` بيعمل حاجتين:
+1. **إبطاء مع الحفاظ على طبقة الصوت** (`atempo` — مش بيخنق الصوت).
+2. **إطالة الصمت** عند نهايات الجمل (0.35–0.60s) والجمل الفرعية (0.18–0.26s) — ده اللي بيدّي إحساس الراوي.
+
+بعدين ارندر بـ `scenes-slow.json`.
+
+> ⚠️ استخدم `--tempo 0.85–0.88`. أقل من 0.80 بيبقى بطيء بشكل غير طبيعي.
+
 ## شكل `scenes.json`
 
 ```json

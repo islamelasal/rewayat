@@ -128,48 +128,138 @@ def crossfade_norm(x):
     return x / m
 
 
-def build_bed(total, scenes, sr=SR):
-    """شريط صوتي كامل بنفس طول الفيديو، مع تحوّلات حسب كل مشهد."""
-    n = int(total * sr)
-    bed = np.zeros(n)
-    t = np.arange(n) / sr
+class BedStream:
+    """مولّد الشريط الصوتي بالمزاج — بيحسب بلوك بلوك (ذاكرة ثابتة)."""
 
-    # طبقات عامة
-    w = wind(n, sr)
-    d = drone(n, sr)
-    hb = heartbeat(n, sr, bpm=52)
-    bed += 0.55 * crossfade_norm(w) * np.clip(t / 6.0, 0, 1)
-    bed += 0.30 * crossfade_norm(d) * np.clip(t / 8.0, 0, 1)
-    bed += 0.28 * crossfade_norm(hb)
+    def __init__(self, total, scenes, sr=SR, seed=7):
+        self.total, self.scenes, self.sr = total, scenes, sr
+        self.n = int(total * sr)
+        self.rng = np.random.default_rng(seed)
+        self.wind_state = 0.0
+        # مرشّح أحادي القطب لصنع هدير الرياح (بدون تكلفة ذاكرة)
+        fc = 220.0
+        self.a = float(np.exp(-2 * np.pi * fc / sr))
+        self.b = float(np.sqrt(1 - self.a ** 2))
 
-    # نبض إيقاعي يزيد في مشاهد التوتر (6، 7، 9) ويهدأ في النهاية
-    for idx, sc in enumerate(scenes):
-        s0, s1 = sc["start"], sc["end"]
-        i0, i1 = int(s0 * sr), min(int(s1 * sr), n)
-        if i1 <= i0:
-            continue
-        seg_t = t[i0:i1]
-        ramp = np.minimum(1.0, np.minimum(seg_t - s0, s1 - seg_t) / 2.5)
+    def _scene_at(self, t):
+        for sc in self.scenes:
+            if sc["start"] <= t < sc["end"]:
+                return sc
+        return self.scenes[-1]
+
+    def block(self, i0, n):
+        sr = self.sr
+        t = (np.arange(i0, i0 + n, dtype=np.float64)) / sr
+        seg = np.zeros(n, dtype=np.float32)
+
+        # ---- رياح: نويز مُرشّح أحادي القطب + هبّات بطيئة
+        white = self.rng.standard_normal(n).astype(np.float64)
+        out = np.empty(n, dtype=np.float64)
+        y = self.wind_state
+        for k in range(n):
+            y = self.a * y + self.b * white[k]
+            out[k] = y
+        self.wind_state = y
+        env = 0.55 + 0.45 * np.sin(2 * np.pi * 0.055 * t + 1.1) * np.sin(2 * np.pi * 0.021 * t)
+        seg += 0.55 * (out * env).astype(np.float32)
+
+        # ---- درون وترى منخفض
+        d = np.zeros(n, dtype=np.float64)
+        for i, f in enumerate((55.0, 82.5, 110.0, 164.8)):
+            det = 1 + 0.0016 * np.sin(2 * np.pi * (0.03 + 0.011 * i) * t)
+            d += (0.9 / (i + 1.4)) * np.sin(2 * np.pi * f * det * t + i)
+        swell = 0.5 + 0.5 * np.sin(2 * np.pi * 0.017 * t - 0.6)
+        seg += (0.30 * (d / 2.0) * (0.45 + 0.55 * swell)).astype(np.float32)
+
+        # ---- نبض قلب (نقرتين كل دورة)
+        period = 60.0 / 52.0
+        beat = np.zeros(n, dtype=np.float32)
+        k0 = int(np.floor(t[0] / period))
+        for kb in range(k0, int(np.floor(t[-1] / period)) + 2):
+            for off, amp in ((0.0, 1.0), (0.32, 0.65)):
+                bs = kb * period + off
+                rel = t - bs
+                m = (rel >= 0) & (rel < 0.16)
+                if not m.any():
+                    continue
+                tt = rel[m]
+                beat[m] += (np.sin(2 * np.pi * 48 * tt) * np.exp(-tt * 26) * amp).astype(np.float32)
+        seg += 0.28 * beat
+
+        # ---- نقرات خفيفة
+        tick = np.zeros(n, dtype=np.float32)
+        for s0 in np.arange(1.5, self.total, 2.6):
+            rel = t - s0
+            m = (rel >= 0) & (rel < 0.05)
+            if m.any():
+                tt = rel[m]
+                tick[m] += (np.sin(2 * np.pi * 1750 * tt) * np.exp(-tt * 90) * 0.05).astype(np.float32)
+        seg += tick
+
+        # ---- طبقات المزاج (المشهد المسيطر على البلوك)
+        sc = self._scene_at(float(t.mean()))
         mood = sc.get("mood", "tense")
-
+        ramp = np.clip(np.minimum(t - sc["start"], sc["end"] - t) / 2.5, 0, 1).astype(np.float32)
         if mood == "tense":
-            pulse = 0.5 + 0.5 * np.sin(2 * np.pi * 0.9 * seg_t)
-            bed[i0:i1] += ramp * 0.10 * pulse * np.sin(2 * np.pi * 41.2 * seg_t)
-        if mood == "awe":
-            # أورد (نغمة عالية رقيقة) في لحظات الرهبة
-            bed[i0:i1] += ramp * 0.06 * np.sin(2 * np.pi * 523.25 * seg_t) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.11 * seg_t))
-            bed[i0:i1] += ramp * 0.045 * np.sin(2 * np.pi * 783.99 * seg_t) * (0.5 + 0.5 * np.sin(2 * np.pi * 0.07 * seg_t + 2))
-        if mood == "calm":
-            bed[i0:i1] += ramp * 0.05 * np.sin(2 * np.pi * 261.63 * seg_t) * (0.5 + 0.5 * np.sin(2 * np.pi * 0.09 * seg_t))
+            pulse = 0.5 + 0.5 * np.sin(2 * np.pi * 0.9 * t)
+            seg += ramp * 0.10 * pulse.astype(np.float32) * np.sin(2 * np.pi * 41.2 * t).astype(np.float32)
+        elif mood == "awe":
+            seg += ramp * 0.06 * np.sin(2 * np.pi * 523.25 * t).astype(np.float32)
+            seg += ramp * 0.045 * np.sin(2 * np.pi * 783.99 * t + 2).astype(np.float32)
+        elif mood == "calm":
+            seg += ramp * 0.05 * np.sin(2 * np.pi * 261.63 * t).astype(np.float32)
 
-    # نقرات خفيفة جدًا كل شوية
-    bed += 0.05 * crossfade_norm(tick(n, sr)) * np.clip(t / 20.0, 0, 1)
+        # ---- دخول/خروج ناعم
+        seg *= np.clip(t / 3.0, 0, 1).astype(np.float32)
+        seg *= np.clip((self.total - t) / 5.0, 0, 1).astype(np.float32)
+        return seg
 
-    # دخول/خروج ناعم
-    fade_in = np.clip(t / 3.0, 0, 1)
-    fade_out = np.clip((total - t) / 5.0, 0, 1)
-    bed *= fade_in * fade_out
-    return bed
+
+def assemble(total, scenes, out_wav, sr=SR, block_sec=2.0):
+    """يبني الميكس النهائي بلوك بلوك ويكتبه على القرص (بدون تحميل الفيديو كله)."""
+    n_total = int(total * sr)
+    bs = int(block_sec * sr)
+    bed = BedStream(total, scenes, sr)
+
+    # فك ترميز صوت مشهد واحد في المرة + كاش للمشهد الحالي
+    cur_idx, cur_audio, cur_start = -1, None, 0
+
+    wf = wave.open(out_wav, "wb")
+    wf.setnchannels(2)
+    wf.setsampwidth(2)
+    wf.setframerate(sr)
+    try:
+        for i0 in range(0, n_total, bs):
+            n = min(bs, n_total - i0)
+            mix = np.zeros(n, dtype=np.float32)
+            mix += 0.92 * bed.block(i0, n)
+
+            t0, t1 = i0 / sr, (i0 + n) / sr
+            for idx, sc in enumerate(scenes):
+                s0 = sc["start"] + sc.get("lead", 0.55)
+                if s0 > t1 or sc["end"] < t0:
+                    continue
+                if idx != cur_idx:
+                    raw = subprocess.run(
+                        [FF, "-hide_banner", "-loglevel", "error", "-i", sc["audio"],
+                         "-ac", "1", "-ar", str(sr), "-f", "s16le", "-"],
+                        stdout=subprocess.PIPE).stdout
+                    cur_audio = np.frombuffer(raw, dtype="<i2").astype(np.float32) / 32768.0
+                    cur_idx, cur_start = idx, int(s0 * sr)
+                # نسخ الجزء المتقاطع
+                a = max(i0, cur_start)
+                b = min(i0 + n, cur_start + len(cur_audio))
+                if b > a:
+                    mix[a - i0: b - i0] += cur_audio[a - cur_start: b - cur_start]
+
+            np.clip(mix, -0.99, 0.99, out=mix)
+            st = np.empty((n, 2), dtype="<i2")
+            v = (mix * 32767).astype("<i2")
+            st[:, 0] = v
+            st[:, 1] = v
+            wf.writeframes(st.tobytes())
+    finally:
+        wf.close()
 
 
 def write_wav(path, stereo, sr=SR):
@@ -356,36 +446,10 @@ def main():
     ass = os.path.join(work, "subs.ass")
     build_ass(scenes, total, ass)
 
-    # ---- الشريط الصوتي (drone/رياح/نبض) = عمود فقري المشهد
-    print("[i] توليد الموسيقى والمؤثرات...")
-    bed = build_bed(total, scenes)
-    voices = np.zeros((int(total * SR), 2))
-    for sc in scenes:
-        if sc["start"] >= total:
-            continue
-        # فك ترميز التعليق الصوتي إلى PCM أحادي
-        raw = subprocess.run(
-            [FF, "-hide_banner", "-loglevel", "error", "-i", sc["audio"],
-             "-ac", "1", "-ar", str(SR), "-f", "s16le", "-"],
-            stdout=subprocess.PIPE).stdout
-        v = np.frombuffer(raw, dtype="<i2").astype(np.float32) / 32768.0
-        s0 = int((sc["start"] + sc.get("lead", 0.55)) * SR)
-        s1 = min(s0 + len(v), voices.shape[0])
-        if s1 > s0:
-            voices[s0:s1, 0] += v[: s1 - s0]
-            voices[s0:s1, 1] += v[: s1 - s0]
-
-    mix = voices * 1.0
-    mix[:, 0] += bed * 0.85
-    mix[:, 1] += bed * 0.85
-    # لمسة stereo للدرون
-    mix[:, 0] *= 1.0
-    mix[:, 1] *= 0.98
-    peak = np.max(np.abs(mix)) or 1.0
-    if peak > 0.98:
-        mix *= 0.98 / peak
+    # ---- الشريط الصوتي (drone/رياح/نبض) — بناء متدفّق بدون تحميل كامل في الذاكرة
+    print("[i] توليد الميكس الصوتي (streaming)...")
     wav = os.path.join(work, "mix.wav")
-    write_wav(wav, mix)
+    assemble(total, scenes, wav)
     print(f"[i] الميكس النهائي: {wav}")
 
     # ---- رندر المشاهد
@@ -428,7 +492,8 @@ def main():
         "-shortest", "-movflags", "+faststart", args.out,
     ])
     # ---- فصول يوتيوب (تايم كود دقيق)
-    chap_path = os.path.join(os.path.dirname(os.path.abspath(args.out)), "ep01-chapters.txt")
+    chap_path = os.path.join(os.path.dirname(os.path.abspath(args.out)),
+                              os.path.basename(args.out).replace(".mp4", "-chapters.txt"))
     with open(chap_path, "w", encoding="utf-8") as f:
         f.write("00:00 المقدمة\n")
         for sc in scenes:
