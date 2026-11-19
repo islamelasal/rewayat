@@ -42,7 +42,11 @@
 **ملاحظة:** غيّر التايم كود من ملف `output/ep01-chapters.txt` بعد الرندر النهائي (بيتولّد تلقائياً بالدقة).
 
 ## 3) الثامبنيل
-`assets/images/ep01/thumb-01.jpg` — 1280×720، جاهز للرفع (خط Noto Kufi).
+نسختين 1280×720 جاهزين (اختَر اللي يجيب CTR أعلى):
+- `assets/images/ep01/thumb-01-A-rooftop.jpg` — «ساعة الرمادي / الملحمة بدأت»
+- `assets/images/ep01/thumb-01-B-street.jpg` — «قبل الحرب الكبرى / ساعة الرمادي»
+
+لتوليد ثامبنيل جديد: `python pipeline/make_thumb.py --image <صورة> --title "..." --kicker "..." --tag "..." --out <مسار>`
 
 ## 4) قائمة الإفصاح عند الرفع
 - **Altered or synthetic content:** ✅ فعّلها (صور واقعية مولّدة).
