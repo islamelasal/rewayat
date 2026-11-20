@@ -1,0 +1,216 @@
+{
+ "episode": 2,
+ "title": "الباب",
+ "prefix": "rewayat-ep02",
+ "scenes": [
+  {
+   "scene": 1,
+   "title": "النداء",
+   "image": "assets/images/ep02/scene-01.png",
+   "motion": "slow_zoom_in",
+   "duration_s": 0.0,
+   "segments": 3,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "Close interior of a small radio shack at night, a narrow-faced eastern man in his early thirties with a black beard and a thin scar on his right temple sitting before an old shortwave transmitter, a microphone in front of him, one weak orange lamp, condensation on the window, a stocky shaved-head older man standing behind him in shadow with a milky blind left eye, dust in the air",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 2,
+   "title": "الرجل الذي علّمني أن أسمع",
+   "image": "assets/images/ep02/scene-02.png",
+   "motion": "slow_zoom_out",
+   "duration_s": 0.0,
+   "segments": 3,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "Portrait of a stocky shaved-head man in his late fifties with a milky-white blind left eye, deep forehead creases, thick grey eyebrows, short uneven grey beard and an old scar on his chin, sitting on a wooden crate repairing a small radio with a screwdriver, warm lamplight from the right, sand-colored dust, a brass compass hanging from a leather cord around his neck, shallow depth of field, background of tents at dusk",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 3,
+   "title": "الطريق من الشرق",
+   "image": "assets/images/ep02/scene-03.png",
+   "motion": "pan_right",
+   "duration_s": 0.0,
+   "segments": 3,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "A small caravan of three overloaded vintage trucks and forty walking people crossing a vast grey desert at first light, long shadows, a thin man in a mud-brown coat and sand scarf sitting on the back of the last truck beside a shaved-head older man, plumes of dust, distant broken power pylons, no village in sight",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 4,
+   "title": "أخطر جملة",
+   "image": "assets/images/ep02/scene-04.png",
+   "motion": "push_up",
+   "duration_s": 0.0,
+   "segments": 4,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "Night campfire in a dry well hollow, a brass compass held open in the scarred hands of a shaved-head older man, its needle pointing south instead of north, the flame lighting his blind white left eye, a young bearded man leaning in from the other side of the fire, cold blue night desert behind them",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 5,
+   "title": "الوادي في الليل",
+   "image": "assets/images/ep02/scene-05.png",
+   "motion": "pan_left",
+   "duration_s": 0.0,
+   "segments": 3,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "A valley between two dark mountains at midnight, sleeping people wrapped in blankets around dying embers, three guards silhouetted, and further away a stocky shaved-head man standing alone holding a small radio to his ear, his back slightly bent in a posture of speaking to someone above him, moonlight, thin mist",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 6,
+   "title": "الخيمة",
+   "image": "assets/images/ep02/scene-06.png",
+   "motion": "slow_zoom_in",
+   "duration_s": 0.0,
+   "segments": 4,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "A huge refugee camp at dusk built as a city of canvas tents, a market street, a well, names painted on tent doors, and at the far end of the square one large dark tent with a blazing white light spilling from its open flap, a silhouetted figure standing in the doorway with the light behind him, faceless, a young bearded man watching from a distance",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 7,
+   "title": "المطر الرمادي",
+   "image": "assets/images/ep02/scene-07.png",
+   "motion": "slow_zoom_out",
+   "duration_s": 0.0,
+   "segments": 4,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "Heavy grey rain falling like ash over a tent city at dawn, people standing in a long queue outside the large lit tent, their faces blank and calm in a way that looks wrong, grey film on their skin and clothes, a young bearded man and a shaved-head older man watching from under a torn awning, puddles reflecting a pale light",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 8,
+   "title": "الاختيار",
+   "image": "assets/images/ep02/scene-08.png",
+   "motion": "slow_zoom_in",
+   "duration_s": 0.0,
+   "segments": 4,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "Inside a dim tent, three men in clean grey robes sitting cross-legged on carpets with a brass tray of bread and a sealed water jar between them, a young bearded man facing them, his hand open in refusal, a shaved-head older man standing behind him against the tent wall, single oil lamp, long shadows",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 9,
+   "title": "الباب",
+   "image": "assets/images/ep02/scene-09.png",
+   "motion": "push_up",
+   "duration_s": 0.0,
+   "segments": 4,
+   "speakers": [
+    "ياسين",
+    "فؤاد"
+   ],
+   "prompt_ar": "A young bearded man standing before the towering dark entrance of the great tent at night, blinding white light flooding out of it and erasing his face into a silhouette, a long silent queue of people waiting behind him, and the hand of a shaved-head older man resting on his shoulder from the side, low camera angle, dust in the light beam",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 10,
+   "title": "خط ذهبي",
+   "image": "assets/images/ep02/scene-10.png",
+   "motion": "slow_zoom_out",
+   "duration_s": 0.0,
+   "segments": 4,
+   "speakers": [
+    "ياسين"
+   ],
+   "prompt_ar": "The grey sky above a tent city splitting open along one thin golden seam that widens into pouring light, thousands of people emerging from tents looking up with wet faces and raised hands, in the foreground a young bearded man holding a small radio, a brass compass lying in the dust at his feet with its needle turning north",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  }
+ ]
+}
