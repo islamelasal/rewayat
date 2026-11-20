@@ -1,0 +1,447 @@
+{
+ "series": "ساعة الرمادي",
+ "episode": 2,
+ "title_ar": "الراجل اللي على الباب",
+ "language": "ar",
+ "register": "فصحى",
+ "style_suffix": "Cinematic epic digital illustration, painterly realism, dramatic chiaroscuro lighting, muted teal-grey palette with ember-orange accents, heavy atmospheric haze, 35mm film grain, wide 16:9 cinematic composition, no text, no logos, no religious figures, no depiction of prophets or angels",
+ "characters": {
+  "yaseen": {
+   "name_ar": "ياسين",
+   "role": "الراوي والبطل",
+   "age": "أوائل الثلاثينات",
+   "voice": "باريتون دافئ، هادئ، يتكلم كأنه يعترف لا كأنه يروي",
+   "look": "رجل شرقي نحيل، وجهه طويل، عظام وجنتين بارزة، لحية سوداء كثة فيها خيط شيب عند الذقن، عينان غائرتان سوداوان حولهما هالتان من السهَر، أثر سجود خفيف في الجبهة، شقّ رفيع على الصدغ الأيمن يمتد إلى خط الشعر",
+   "wardrobe": "معطف صوف بنّي طيني قديم، وشاح قطني بلون الرمل ملفوف حول الرقبة، حقيبة جلدية رقيقة على الكتف، راديو قصير الموجة في اليد",
+   "tags": "yaseen_main, long oval face, deep-set dark eyes, black beard with grey chin streak, thin scar on right temple, sand scarf, mud-brown coat"
+  },
+  "fouad": {
+   "name_ar": "فؤاد",
+   "role": "الشخصية الثانية — المعلّم والرفيق",
+   "age": "أواخر الخمسينات",
+   "voice": "باس، خشن قليلًا، بطيء، جمل قصيرة واثقة",
+   "look": "رجل مربوع القامة عريض المنكبين، محلوق الرأس تمامًا، جبهة عريضة عليها أخاديد عميقة، حاجبان كثيفان رماديان، العين اليسرى بيضاء حليبية بلا بؤبؤ (عمى قديم)، العين اليمنى بنّية حادّة، لحية قصيرة رمادية غير منتظمة، أثر جرح قديم على الذقن، بشرة داكنة محروقة من الشمس",
+   "wardrobe": "قميص صوفي رمادي فاتح تحته قميص أسود، عباءة قصيرة بلون الرماد، بوصلة نحاسية معلّقة في الرقبة على سلك جلدي، راديو صغير في جيب الصدر",
+   "tags": "fouad_main, stocky build, completely shaved head, deep forehead creases, milky-white blind left eye, sharp brown right eye, short grey beard, chin scar, brass compass necklace"
+  }
+ },
+ "scenes": [
+  {
+   "id": 1,
+   "title_ar": "النداء",
+   "chapter": "النداء",
+   "mood": "tense",
+   "motion": "slow_zoom_in",
+   "image_prompt": "Close interior of a small radio shack at night, a narrow-faced eastern man in his early thirties with a black beard and a thin scar on his right temple sitting before an old shortwave transmitter, a microphone in front of him, one weak orange lamp, condensation on the window, a stocky shaved-head older man standing behind him in shadow with a milky blind left eye, dust in the air",
+   "image_file": "assets/images/ep02/scene-01.png",
+   "lead": 1.1,
+   "tail": 1.9,
+   "sfx_ar": "تشويش راديو خفيف، طنين محوّل كهربائي، رياح خارج الجدار",
+   "music_ar": "درون منخفض 41 هرتز + نبض بطيء",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في السنة السادسة والأربعين، صار اسمي ثقيلًا على لساني. لم أختر أن أكون الذي يتكلم في الراديو، ولم أختر أن يكون صوتي هو الصوت الذي يسمعه أهل القاهرة في تلك الليلة. كل ما فعلته أنني قلت جملة واحدة، وأنا لا أعلم أنها ستقطع الصحراء، وتدخل البيوت، وتوقظ رجلًا واقفًا على سطح عمارة بعيدة.",
+     "audio": "assets/audio/ep02/tts/s01-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "قلها كما هي. لا تزد حرفًا، ولا تنقص حرفًا.",
+     "stage": "صوت منخفض، خلف الكتف",
+     "audio": "assets/audio/ep02/tts/s01-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "قلتها. ثم أطفأ فؤاد الراديو، وجلس على الأرض، ووضع وجهه بين راحتيه، كمن ألقى حجرًا في بئر عميقة ثم وقف ينتظر الصوت.",
+     "audio": "assets/audio/ep02/tts/s01-3.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "title_ar": "الرجل الذي علّمني أن أسمع",
+   "chapter": "الرجل الذي علّمني أن أسمع",
+   "mood": "calm",
+   "motion": "slow_zoom_out",
+   "image_prompt": "Portrait of a stocky shaved-head man in his late fifties with a milky-white blind left eye, deep forehead creases, thick grey eyebrows, short uneven grey beard and an old scar on his chin, sitting on a wooden crate repairing a small radio with a screwdriver, warm lamplight from the right, sand-colored dust, a brass compass hanging from a leather cord around his neck, shallow depth of field, background of tents at dusk",
+   "image_file": "assets/images/ep02/scene-02.png",
+   "lead": 1.0,
+   "tail": 1.8,
+   "sfx_ar": "مفكّ على معدن، تنفّس هادئ، نار بعيدة",
+   "music_ar": "وتر منخفض دافئ 55 هرتز",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "كان فؤاد أكبر مني بعشرين سنة، وأصغر مني في الخوف. مربوع القامة، عريض المنكبين، محلوق الرأس، على وجهه غبار لا يزول، وفي عينه اليسرى بياض حليبي لا يرى به شيئًا. عرفته في مخيم على حدود الشرق، حيث كان يصلح أجهزة الراديو للناس، ويأخذ أجرته أرغفة لا نقودًا.",
+     "audio": "assets/audio/ep02/tts/s02-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "أنا لا أرى بعيني اليسرى، ولكنني أسمع بها أكثر مما تسمع أنت بأذنيك.",
+     "stage": "وهو يعمل، دون أن يرفع رأسه",
+     "audio": "assets/audio/ep02/tts/s02-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "ضحكت يومها. واليوم أعرف أنه لم يكن يمزح.",
+     "audio": "assets/audio/ep02/tts/s02-3.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "title_ar": "الطريق من الشرق",
+   "chapter": "الطريق من الشرق",
+   "mood": "awe",
+   "motion": "pan_right",
+   "image_prompt": "A small caravan of three overloaded vintage trucks and forty walking people crossing a vast grey desert at first light, long shadows, a thin man in a mud-brown coat and sand scarf sitting on the back of the last truck beside a shaved-head older man, plumes of dust, distant broken power pylons, no village in sight",
+   "image_file": "assets/images/ep02/scene-03.png",
+   "lead": 1.0,
+   "tail": 1.7,
+   "sfx_ar": "محرّك قديم بعيد، رياح صحراوية، خطوات على رمل",
+   "music_ar": "درون صحراوي واسع + طبقة عالية خفيفة",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "خرجنا من الشرق في قافلة صغيرة: ثلاث عربات، وأربعون نفسًا، وسبع صهاريج ماء. كان فؤاد يجلس بجانبي ولا يتكلم ساعات، ثم يقول جملة واحدة تفسّر كل شيء. سألته مرة: إلى أين نحن ذاهبان؟",
+     "audio": "assets/audio/ep02/tts/s03-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "نحن لا نذهب إلى مكان. نحن نذهب إلى وقت.",
+     "stage": "بهدوء، وهو ينظر إلى الأفق",
+     "audio": "assets/audio/ep02/tts/s03-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "ظننتها يومها فلسفة رجل عجوز. ثم رأيت الطريق، وكل من فيه، يمشي في اتجاه واحد.",
+     "audio": "assets/audio/ep02/tts/s03-3.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "title_ar": "أخطر جملة",
+   "chapter": "أخطر جملة",
+   "mood": "tense",
+   "motion": "push_up",
+   "image_prompt": "Night campfire in a dry well hollow, a brass compass held open in the scarred hands of a shaved-head older man, its needle pointing south instead of north, the flame lighting his blind white left eye, a young bearded man leaning in from the other side of the fire, cold blue night desert behind them",
+   "image_file": "assets/images/ep02/scene-04.png",
+   "lead": 1.0,
+   "tail": 1.8,
+   "sfx_ar": "خشب يحترق، رياح ليلية، معدن يطقطق",
+   "music_ar": "درون متوتر + نغمة جرس بعيدة",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الليلة الرابعة، توقفنا عند بئر جافّة. جلس فؤاد أمام النار، وأخرج من جيبه بوصلة نحاسية قديمة، عقربها لا يشير إلى الشمال، بل إلى نقطة ثابتة في الجنوب. سألته عنها، فقال إنها ليست بوصلة للاتجاهات، بل بوصلة للوعود.",
+     "audio": "assets/audio/ep02/tts/s04-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "أخطر جملة يمكن أن تسمعها في حياتك أربع كلمات: أنا جئت أريّحكم. من يقولها لك، يريد منك شيئًا واحدًا: أن تسلّمه تعبك.",
+     "stage": "بطيء، وكل كلمة مفصولة",
+     "audio": "assets/audio/ep02/tts/s04-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "قلت له: وماذا لو كان صادقًا؟",
+     "audio": "assets/audio/ep02/tts/s04-3.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "الصادق لا يحتاج أن يعدك بالراحة. الصادق يعمل، ثم يمشي.",
+     "stage": "يرفع عينه الوحيدة من النار",
+     "audio": "assets/audio/ep02/tts/s04-4.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "title_ar": "الوادي في الليل",
+   "chapter": "الوادي في الليل",
+   "mood": "tense",
+   "motion": "pan_left",
+   "image_prompt": "A valley between two dark mountains at midnight, sleeping people wrapped in blankets around dying embers, three guards silhouetted, and further away a stocky shaved-head man standing alone holding a small radio to his ear, his back slightly bent in a posture of speaking to someone above him, moonlight, thin mist",
+   "image_file": "assets/images/ep02/scene-05.png",
+   "lead": 1.0,
+   "tail": 1.9,
+   "sfx_ar": "رياح وادي، أنفاس نائمة، راديو بعيد جدًا",
+   "music_ar": "درون منخفض جدًا + نبض قلب خافت",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الليلة السابعة، نمنا في واد بين جبلين، والناس نائمة، والحراسة ثلاثة. استيقظت عند منتصف الليل على صوت خطوات. كان فؤاد يمشي بعيدًا عن النار، يحمل راديوه الصغير، ويحدّث أحدًا بصوت منخفض. لم أفهم كلمة واحدة، لكنني رأيت شيئًا واحدًا: كان يقف بانحناءة صغيرة، انحناءة من يخاطب من هو أعلى منه.",
+     "audio": "assets/audio/ep02/tts/s05-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "شيخ فؤاد؟",
+     "stage": "هامس، من بعيد",
+     "audio": "assets/audio/ep02/tts/s05-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "نم يا ياسين. غدًا نقترب من المخيم، وهناك كلام كثير، وقليل منه يستحق أن تسمعه.",
+     "stage": "دون أن يستدير",
+     "audio": "assets/audio/ep02/tts/s05-3.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "title_ar": "الخيمة",
+   "chapter": "الخيمة",
+   "mood": "awe",
+   "motion": "slow_zoom_in",
+   "image_prompt": "A huge refugee camp at dusk built as a city of canvas tents, a market street, a well, names painted on tent doors, and at the far end of the square one large dark tent with a blazing white light spilling from its open flap, a silhouetted figure standing in the doorway with the light behind him, faceless, a young bearded man watching from a distance",
+   "image_file": "assets/images/ep02/scene-06.png",
+   "lead": 1.0,
+   "tail": 2.0,
+   "sfx_ar": "همس سوق، أطفال بعيدون، ضوء كهربائي يطنّ",
+   "music_ar": "درون واسع + طبقة كريستالية باردة",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "دخلنا المخيم عند المغرب. لم يكن مخيمًا كما تخيّلت، بل مدينة من الخيام، فيها سوق، وبئر، وخيام مكتوب على أبوابها أسماء. أخذني فؤاد إلى خيمة في آخر الساحة، وقال لي: انتظر هنا. ثم دخل وحده.",
+     "audio": "assets/audio/ep02/tts/s06-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "بقيت واقفًا نصف ساعة. وعندما فُتح الباب، خرج رجل لم أرَ وجهه، لأن النور كان خلفه. خرج فؤاد بعده، وكان وجهه قد تغيّر.",
+     "audio": "assets/audio/ep02/tts/s06-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "من هذا؟",
+     "audio": "assets/audio/ep02/tts/s06-3.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "رجل يوزّع الراحة.",
+     "stage": "ساخرًا، والمرة الأولى",
+     "audio": "assets/audio/ep02/tts/s06-4.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "title_ar": "المطر الرمادي",
+   "chapter": "المطر الرمادي",
+   "mood": "tense",
+   "motion": "slow_zoom_out",
+   "image_prompt": "Heavy grey rain falling like ash over a tent city at dawn, people standing in a long queue outside the large lit tent, their faces blank and calm in a way that looks wrong, grey film on their skin and clothes, a young bearded man and a shaved-head older man watching from under a torn awning, puddles reflecting a pale light",
+   "image_file": "assets/images/ep02/scene-07.png",
+   "lead": 1.0,
+   "tail": 2.0,
+   "sfx_ar": "مطر ثقيل على القماش، سعال بعيد، طابور خطوات",
+   "music_ar": "درون حزين + نغمة جرس متكررة",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الفجر، نزل المطر. مطر رمادي ثقيل، يقع على الوجوه كالغبار، ويجعل الناس يسعلون ثم يسكتون. قالوا لنا إن الرجل الذي في الخيمة يستطيع أن يوقف المطر. وبدأ الناس يدخلون خيمته رجلًا رجلًا، ويخرجون بوجوه هادئة، هدوءًا لا يشبه الراحة، بل يشبه من نسي شيئًا ثم قرر ألا يبحث عنه.",
+     "audio": "assets/audio/ep02/tts/s07-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "انظر إليهم. ما فقدوه ليس الأكل ولا الماء. فقدوا الغضب. والغضب آخر ما يبقى في الإنسان.",
+     "stage": "هادئًا، بصوت منخفض",
+     "audio": "assets/audio/ep02/tts/s07-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "قلت له: أليس الغضب شرًّا؟",
+     "audio": "assets/audio/ep02/tts/s07-3.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "الغضب الذي يمنعك عن الظلم ليس شرًّا. إنه آخر حبل يربطك بالحق.",
+     "stage": "يمسك كتف ياسين",
+     "audio": "assets/audio/ep02/tts/s07-4.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "title_ar": "الاختيار",
+   "chapter": "الاختيار",
+   "mood": "tense",
+   "motion": "slow_zoom_in",
+   "image_prompt": "Inside a dim tent, three men in clean grey robes sitting cross-legged on carpets with a brass tray of bread and a sealed water jar between them, a young bearded man facing them, his hand open in refusal, a shaved-head older man standing behind him against the tent wall, single oil lamp, long shadows",
+   "image_file": "assets/images/ep02/scene-08.png",
+   "lead": 1.0,
+   "tail": 1.9,
+   "sfx_ar": "قماش خيمة، صبّ ماء في كوب، سكوت ثقيل",
+   "music_ar": "درون منخفض + وتر متصاعد ببطء",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "جاءوا إليّ في اليوم الثالث. قالوا إنهم سمعوا صوتي في الراديو، وإن الناس في القاهرة ينتظرون كلمة مني، وإن الرجل يريد أن أتكلم، وأن أقول للناس إن الراحة وصلت. وأعطوني مقابل ذلك: ماء لنا، وطريقًا آمنًا، واسمي في قائمة الأحياء.",
+     "audio": "assets/audio/ep02/tts/s08-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "خذ الماء. خذ الطريق. ولا تبِع اسمك.",
+     "stage": "من خلفه، بلا حركة",
+     "audio": "assets/audio/ep02/tts/s08-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "قلت له: وهل يُباع الاسم؟",
+     "audio": "assets/audio/ep02/tts/s08-3.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "الاسم ليس ما تُنطق. الاسم هو ما يقوله الناس عنك عندما لا تكون موجودًا.",
+     "stage": "بطيء جدًا",
+     "audio": "assets/audio/ep02/tts/s08-4.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "title_ar": "الباب",
+   "chapter": "الباب",
+   "mood": "tense",
+   "motion": "push_up",
+   "image_prompt": "A young bearded man standing before the towering dark entrance of the great tent at night, blinding white light flooding out of it and erasing his face into a silhouette, a long silent queue of people waiting behind him, and the hand of a shaved-head older man resting on his shoulder from the side, low camera angle, dust in the light beam",
+   "image_file": "assets/images/ep02/scene-09.png",
+   "lead": 1.0,
+   "tail": 2.2,
+   "sfx_ar": "طنين ضوء، صمت طابور، تنفّس مكتوم",
+   "music_ar": "درون متصاعد + جرس واحد",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الليلة الأخيرة، وقفت عند باب الخيمة الكبيرة. كان خلف الباب ضوء يشبه ضوء النهار، وناس واقفون في صفّ طويل، بلا صوت. مددت يدي إلى الباب. فجاءت يد فؤاد على كتفي.",
+     "audio": "assets/audio/ep02/tts/s09-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "إن قلت الجملة من داخل هذه الخيمة، فلن تكون رسولًا. ستكون بابًا. والأبواب لا تختار من يدخل.",
+     "stage": "قريبًا من أذنه",
+     "audio": "assets/audio/ep02/tts/s09-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "سألته: وأنت؟ ماذا ستكون أنت؟",
+     "audio": "assets/audio/ep02/tts/s09-3.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "فؤاد",
+     "text": "أنا كنت بابًا قبل أن تعرف الكلام، يا ياسين.",
+     "stage": "يبتسم ابتسامة عجيبة",
+     "audio": "assets/audio/ep02/tts/s09-4.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "title_ar": "خط ذهبي",
+   "chapter": "خط ذهبي",
+   "mood": "awe",
+   "motion": "slow_zoom_out",
+   "image_prompt": "The grey sky above a tent city splitting open along one thin golden seam that widens into pouring light, thousands of people emerging from tents looking up with wet faces and raised hands, in the foreground a young bearded man holding a small radio, a brass compass lying in the dust at his feet with its needle turning north",
+   "image_file": "assets/images/ep02/scene-10.png",
+   "lead": 1.2,
+   "tail": 3.0,
+   "sfx_ar": "رياح تعلو ثم تسكن، جرس واحد طويل، صوت جماعة بعيد",
+   "music_ar": "درون يعلو إلى نغمة كبرى + جرس",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "لم أدخل الخيمة. خرجت إلى الساحة، ورفعت الراديو، وقلت جملة أخرى، لم يطلبها أحد مني. قلت: الراحة لا تُعطى. الراحة تُصنع.",
+     "audio": "assets/audio/ep02/tts/s10-1.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "وفي تلك اللحظة، انشقّت السماء الرمادية من ناحية الشام، وطلع منها خط ذهبي رفيع، ثم اتسع، حتى صار نورًا يدخل من كل ناحية. الناس خرجوا يبكون، وكنت أبحث عن فؤاد بينهم.",
+     "audio": "assets/audio/ep02/tts/s10-2.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "لم أجده. وجدت فقط بوصلته النحاسية على الأرض، وعقربها يستدير، لأول مرة، إلى الشمال.",
+     "audio": "assets/audio/ep02/tts/s10-3.mp3",
+     "audio_kind": "speech"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "يا شيخ فؤاد... أنت لم تكن بابًا. أنت كنت الطريق.",
+     "stage": "وحده، تحت الضوء",
+     "audio": "assets/audio/ep02/tts/s10-4.mp3",
+     "audio_kind": "speech"
+    }
+   ]
+  }
+ ]
+}

@@ -30,6 +30,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 FONT_DIR = os.path.join(ROOT, "assets", "fonts")
+import dialogue as dialogue_engine   # noqa: E402  (تجميع مقاطع السرد/الحوار)
 W, H = 1920, 1080
 FPS = 24
 SR = 48000
@@ -172,7 +173,9 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Sub,Noto Naskh Arabic,32,&H00F2EDE4,&H00FFFFFF,&H00120F0C,&H99000000,0,0,0,0,100,100,0,0,1,1.5,0.9,8,110,110,60,1
+Style: Sub,Noto Naskh Arabic,39,&H00F2EDE4,&H00FFFFFF,&H00120F0C,&H99000000,0,0,0,0,100,100,0,0,1,1.5,0.9,8,110,110,60,1
+Style: Fouad,Noto Naskh Arabic,39,&H00A8D8F0,&H00FFFFFF,&H00120F0C,&H99000000,0,0,0,0,100,100,0,0,1,1.6,1.0,8,110,110,60,1
+Style: FouadName,Noto Kufi Arabic,25,&H0090C4DC,&H00FFFFFF,&H00120F0C,&H66000000,0,0,0,0,100,100,0,0,1,1.0,0,8,110,110,96,1
 Style: Title,Noto Kufi Arabic,54,&H00F6F1E9,&H00FFFFFF,&H00000000,&H99000000,0,0,0,0,100,100,0,0,1,2,2,8,40,40,0,1
 Style: Small,Noto Naskh Arabic,24,&H00C9B7AC,&H00FFFFFF,&H00000000,&H99000000,0,0,0,0,100,100,0,0,1,0.8,0,8,40,40,30,1
 
@@ -185,11 +188,34 @@ def build_ass(scenes, total, out_path):
     lines = [ASS_HEAD.format(w=SUB_W, h=SUB_H)]
     for sc in scenes:
         # (تم إلغاء عنوان الفصل أعلى الشاشة: تشويش بصري وتقليل تركيز)
+        segs = sc.get("_timings")            # توقيتات مقاطع السرد/الحوار (إن وُجدت)
+        if segs:
+            for t0, t1, seg in segs:
+                a = sc["start"] + t0 + 0.10
+                b = sc["start"] + t1 - 0.06
+                if b - a < 0.5:
+                    continue
+                is_f = (seg.get("speaker") == "فؤاد")
+                style = "Fouad" if is_f else "Sub"
+                for ca, cb, txt in chunk_vo(seg["text"], a, b, max_chars=58):
+                    if cb - ca < 0.55:
+                        continue
+                    lines.append(
+                        f"Dialogue: 0,{fmt_ts(ca)},{fmt_ts(cb)},{style},,0,0,0,,"
+                        f"{rtl(txt)}{{\\fad(180,180)\\pos({SUB_W//2},642)}}"
+                    )
+                # اسم المتكلم فوق السطر لما يكون حوار
+                if seg.get("kind") == "dialogue" and is_f:
+                    lines.append(
+                        f"Dialogue: 0,{fmt_ts(a)},{fmt_ts(min(a+1.8, b))},FouadName,,0,0,0,,"
+                        f"{rtl(seg['speaker'])}{{\\fad(200,300)\\pos({SUB_W//2},578)}}"
+                    )
+            continue
         for a, b, txt in chunk_vo(sc["vo"], sc["start"] + 0.25, sc["end"] - 0.25):
             if b - a < 0.6:
                 continue
             lines.append(
-                f"Dialogue: 0,{fmt_ts(a)},{fmt_ts(b)},Sub,,0,0,0,,{rtl(txt)}{{\\fad(200,200)\\pos({SUB_W//2},634)}}"
+                f"Dialogue: 0,{fmt_ts(a)},{fmt_ts(b)},Sub,,0,0,0,,{rtl(txt)}{{\\fad(200,200)\\pos({SUB_W//2},642)}}"
             )
     # كارت البداية
     lines.append(
@@ -282,15 +308,23 @@ def main():
     work = args.workdir or os.path.join(epdir, "_build")
     os.makedirs(work, exist_ok=True)
 
-    # ---- مدد الصوت
+    # ---- مدد الصوت: تجميع مقاطع السرد/الحوار لكل مشهد (مع توقيتات)
+    os.makedirs(os.path.join(ROOT, "assets", "audio", "build"), exist_ok=True)
     t = 0.0
     scenes = []
     for i, sc in enumerate(items, 1):
-        vo_path = os.path.join(ROOT, sc["vo_file"])
-        d = dur(vo_path)
+        sc = dict(sc)
         lead = sc.get("lead", 0.55)
         tail = sc.get("tail", 1.25)
-        sc = dict(sc)
+        if sc.get("segments"):
+            vo_path = os.path.join(work, f"vo-{sc['id']:02d}.wav")
+            d, tim = dialogue_engine.assemble_scene(sc, vo_path)
+            sc["_timings"] = tim
+            # نص المشهد كامل (للـ chunk/timecode فقط)
+            sc["vo"] = " ".join(s["text"] for s in sc["segments"])
+        else:
+            vo_path = os.path.join(ROOT, sc["vo_file"])
+            d = dur(vo_path)
         sc["audio"] = vo_path
         sc["image"] = os.path.join(ROOT, sc["image_file"])
         sc["start"] = t
@@ -332,6 +366,8 @@ def main():
         local = dict(sc)
         if not args.preview:
             local["_pad"] = XF      # هيتشال من الأخير بعد الحلقة
+        if args.preview:
+            local["_timings"] = [tt for tt in sc.get("_timings", []) if tt[0] < args.preview]
         if args.preview:
             local["end"] = min(local["end"], args.preview)
             if local["end"] - local["start"] < 0.4:
