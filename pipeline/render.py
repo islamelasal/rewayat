@@ -254,10 +254,31 @@ def build_ass(scenes, total, out_path):
 # ملاحظة: خط Noto مفيهوش علامات تنصيص ولا أقواس (بتطلع مربع فاضي) —
 # فالكلام مكتوب من غيرها، والفواصل العربية بتعمل الشغل.
 INTRO_LINES = [
-    ("الحلقة السابقة", "الملحمة بدأت، راجل عجوز في الراديو، وشارع كله بيبص لفوق"),
-    ("الحلقة دي", "ياسين خرج يدوّر على إجابة، ولقى فؤاد"),
-    ("وخد بالك", "فيه جملة واحدة في الحلقة دي، لو سمعتها هتفهم كل حاجة"),
+    ("الحلقة السابقة", "بدأت الملحمة برجل عجوز في الراديو، وشارع كله يرفع رأسه"),
+    ("هذه الحلقة", "خرج ياسين يبحث عن إجابة، فوجد فؤاد"),
+    ("وانتبه", "فيها جملة واحدة، إن سمعتها فهمت كل شيء"),
 ]
+
+# مقدمة كل حلقة على حدة (فصحى كاملة، ومن غير أي علامة ترقيم لاتينية —
+# خط Noto مش فيه ولا واحدة منها وبتطلع مربع فاضي).
+INTRO_LINES_BY_EP = {
+    2: [
+        ("الحلقة السابقة", "بدأت الملحمة برجل عجوز في الراديو، وشارع كله يرفع رأسه"),
+        ("هذه الحلقة", "خرج ياسين يبحث عن إجابة، فوجد فؤاد"),
+        ("وانتبه", "فيها جملة واحدة، إن سمعتها فهمت كل شيء"),
+    ],
+    3: [
+        ("الحلقة السابقة", "وقف ياسين عند الباب، وسمع صوتًا، وخرج من المخيم"),
+        ("هذه الحلقة", "أعطاه الناس اسمًا لم يختره، فصار مسؤولًا عن كل ما يفعلون"),
+        ("وانتبه", "الاسم الذي يعطونه لك يمكنهم أن يأخذوه، أما الذي تكتبه بنفسك فلا"),
+    ],
+}
+
+# الصورة الخلفية للمقدمة لكل حلقة
+INTRO_BG = {
+    2: ("assets", "images", "ep02", "scene-02.png"),
+    3: ("assets", "images", "ep03", "scene-02.png"),
+}
 
 
 def _dt(t):
@@ -275,7 +296,7 @@ def _dt(t):
     return t
 
 
-def build_intro_card(out_path, seconds, w=W, h=H, fps=FPS):
+def build_intro_card(out_path, seconds, w=W, h=H, fps=FPS, ep=2):
     """كارت تمهيدي (بلا صوت) — النص بيتحط بـ ffmpeg drawtext مش PIL.
 
     PIL بيرسم الحروف العربية منفصلة ومقلوبة (مش بيعمل shaping)، فكل النص
@@ -285,7 +306,8 @@ def build_intro_card(out_path, seconds, w=W, h=H, fps=FPS):
     from PIL import Image
     import numpy as _np
 
-    img = Image.open(os.path.join(ROOT, "assets", "images", "ep02", "scene-02.png")).convert("RGB")
+    bg = INTRO_BG.get(ep, INTRO_BG[2])
+    img = Image.open(os.path.join(ROOT, *bg)).convert("RGB")
     base = img.resize((w, h), Image.LANCZOS)
     arr = _np.asarray(base).astype(_np.float32)
     arr = arr * 0.16 + (_np.array([12, 13, 16], dtype=_np.float32) * 0.84)
@@ -295,7 +317,7 @@ def build_intro_card(out_path, seconds, w=W, h=H, fps=FPS):
     naskh = os.path.join(FONT_DIR, "NotoNaskhArabic-400.ttf")
     y = int(h * 0.26)
     vf = []
-    for head, body in INTRO_LINES:
+    for head, body in INTRO_LINES_BY_EP.get(ep, INTRO_LINES):
         vf.append(
             f"drawtext=fontfile={kufi}:text='{_dt(head)}':fontsize=38:"
             f"fontcolor=0xD8A24A:x=(w-text_w)/2:y={y}:text_shaping=1"
@@ -429,7 +451,6 @@ def main():
 
     # ---- ترجمة
     ass = os.path.join(work, "subs.ass")
-    build_ass(scenes, total, ass)
 
     # ---- مقدمة تمهيدية (لو محددة في السكربت) — بتوسّع الفيلم فوق 8 دقايق
     intro = float(spec.get("intro_seconds", 0) or 0)
@@ -438,6 +459,10 @@ def main():
             sc["start"] += intro
             sc["end"] += intro
         total += intro
+
+    # الترجمة بتُبنى بعد إزاحة المقدمة، ولو اتبنت قبلها تطلع مقدّمة بعشرات
+    # الثواني وكل الحوار يسبق الصوت. (كان ده باج في الحلقة 2 كمان.)
+    build_ass(scenes, total, ass)
 
     # ---- الصوت: محرك احترافي (stems + ducking + EBU R128 mastering)
     print("[i] معالجة الصوت (voice stem → music stem → ducking → mastering)...")
@@ -481,7 +506,7 @@ def main():
 
     if intro > 0 and not args.preview:
         card_png = os.path.join(work, "intro.png")
-        ok = build_intro_card(card_png, intro)
+        ok = build_intro_card(card_png, intro, ep=int(spec.get("episode", 2) or 2))
         if ok:
             card_mp4 = card_png.replace(".png", ".mp4")
             real = dur(card_mp4)          # المدة الفعلية بعد الرندر
