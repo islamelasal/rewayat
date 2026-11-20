@@ -24,11 +24,47 @@ KUFI900 = os.path.join(FONT_DIR, "NotoKufiArabic-900.ttf")
 KUFI700 = os.path.join(FONT_DIR, "NotoKufiArabic-700.ttf")
 
 
+def clean(t):
+    """تنظيف الرموز حسب ما هو **متاح فعلًا** في خط Noto Kufi.
+
+    اتقاس بـ fontTools: الخط مفيهوش شرطة (-) ولا — ولا • ولا /  (كلهم بيطلعوا
+    مربع فاضي). الموجود: الفاصلة العربية ٬ والنقطة ٫ والمسافة.
+    """
+    # الشرطة بقت مسافة (مش فاصلة): الفاصلة العربية ٬ شكلها شرطة مائلة فوق
+    # السطر، وده بيبان كأنه خطأ إملائي في العنوان. المسافة أنضف بصريًا.
+    for bad, good in (("—", " "), ("–", " "), ("\u2013", " "), ("-", " "),
+                      ("«", ""), ("»", ""), ("\u200f", ""), ("\u200e", ""),
+                      ("•", ""), ("\u00b7", ""), ("/", " "), ("\u204f", "")):
+        t = t.replace(bad, good)
+    return " ".join(t.split())
+
+
 def esc(t):
     """تهريب الرموز اللي بتكسر فلتر drawtext."""
     for ch in ("\\", "'", ":", "%"):
         t = t.replace(ch, "\\" + ch)
     return t
+
+
+def make_gradient(w, h, top_strength=0.66, top_h=0.50,
+                  bot_strength=0.58, bot_h=0.42):
+    """طبقة سوداء بقناة ألفا متدرجة بسلاسة (منحنى ناعم، مش خطي) — للـ overlay."""
+    from PIL import Image
+    import numpy as _np
+    yy = _np.arange(h, dtype=_np.float32) / max(h - 1, 1)
+    t_h = max(int(h * top_h), 1)
+    b_h = max(int(h * bot_h), 1)
+    ay = _np.zeros(h, dtype=_np.float32)
+    # فوق: من 1 عند الحد العلوي إلى 0 عند نهاية المنطقة (منحنى تكعيبي ناعم)
+    top = _np.arange(t_h, dtype=_np.float32) / max(t_h - 1, 1)
+    ay[:t_h] = _np.maximum(ay[:t_h], (1.0 - top) ** 1.6 * top_strength)
+    # تحت
+    bot = _np.arange(b_h, dtype=_np.float32) / max(b_h - 1, 1)
+    ay[h - b_h:] = _np.maximum(ay[h - b_h:], (bot ** 2.0) * bot_strength)
+    alpha = (yy * 0)[:, None] + ay[:, None]
+    rgba = _np.zeros((h, w, 4), dtype=_np.uint8)
+    rgba[..., 3] = _np.clip(alpha * 255, 0, 255).astype(_np.uint8)
+    return Image.fromarray(rgba, "RGBA")
 
 
 def text_width(txt, font_path, size):
@@ -61,6 +97,9 @@ def wrap(txt, max_chars=22):
     return [" ".join(words[:mid]), " ".join(words[mid:])]
 
 
+GRAD = [None]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--image", required=True)
@@ -78,9 +117,9 @@ def main():
     margin = int(W * (1 - a.max_width_pct) / 2)
     max_w = W - 2 * margin
 
-    title_lines = wrap(a.title)
+    title_lines = wrap(clean(a.title))
     title_size = fit_size(title_lines, KUFI900, max_w, int(88 * scale))
-    kicker_lines = wrap(a.kicker) if a.kicker else []
+    kicker_lines = wrap(clean(a.kicker)) if a.kicker else []
     kicker_size = fit_size(kicker_lines, KUFI900, max_w, int(34 * scale)) if kicker_lines else 0
     tag_size = fit_size([a.tag], KUFI700, max_w, int(34 * scale)) if a.tag else 0
 
@@ -93,26 +132,19 @@ def main():
         "eq=contrast=1.16:brightness=-0.05:saturation=1.10",
     ]
 
-    # تدرّج غامق ناعم فوق وتحت (شرائح رفيعة بألفا متزايدة — مفيش خط واضح)
-    BANDS = 28
-    top_h = int(H * 0.46)
-    for i in range(BANDS):
-        band_y = int(i * top_h / BANDS)
-        band_h = max(1, int(top_h / BANDS) + 1)
-        alpha = 0.62 * (1 - i / (BANDS - 1)) ** 1.4
-        vf.append(f"drawbox=x=0:y={band_y}:w={W}:h={band_h}:"
-                  f"color=black@{alpha:.3f}:t=fill")
-    bot_h = int(H * 0.38)
-    for i in range(BANDS):
-        band_y = int(H - bot_h + i * bot_h / BANDS)
-        band_h = max(1, int(bot_h / BANDS) + 1)
-        alpha = 0.55 * (i / (BANDS - 1)) ** 1.2
-        vf.append(f"drawbox=x=0:y={band_y}:w={W}:h={band_h}:"
-                  f"color=black@{alpha:.3f}:t=fill")
+    # تدرّج غامق ناعم فوق وتحت.
+    # ملاحظة: شرائح drawbox كانت بتعمل خطوط أفقية على السما الفاتحة (كل شريحة
+    # بتحط حافة صلبة فوق اللي قبلها). الحل: تدرّج واحد متصل على صورة رمادية
+    # بـ PIL، ونستخدمه كـ overlay — ناعم ١٠٠٪ ومفيهوش أي حدود.
+    grad_top = make_gradient(W, H, top_strength=0.66, top_h=0.50,
+                             bot_strength=0.58, bot_h=0.42)
+    grad_path = os.path.join(os.path.dirname(os.path.abspath(a.out)), ".grad.png")
+    grad_top.save(grad_path)
+    GRAD[0] = grad_path
 
     for i, line in enumerate(kicker_lines):
         vf.append(
-            f"drawtext=fontfile={KUFI900}:text='{esc(line)}':fontsize={kicker_size}:"
+            f"drawtext=fontfile={KUFI900}:text='{esc(clean(line))}':fontsize={kicker_size}:"
             f"fontcolor=0xD8A24A:x=w-text_w-{margin}:"
             f"y={y + i * int(kicker_size * 1.3)}:"
             f"shadowx=0:shadowy=3:shadowcolor=0x000000@0.8"
@@ -124,7 +156,7 @@ def main():
     for i, line in enumerate(title_lines):
         ly = y + i * line_h
         vf.append(
-            f"drawtext=fontfile={KUFI900}:text='{esc(line)}':fontsize={title_size}:"
+            f"drawtext=fontfile={KUFI900}:text='{esc(clean(line))}':fontsize={title_size}:"
             f"fontcolor=0xF6F1E9:x=w-text_w-{margin}:y={ly}:"
             f"borderw=3:bordercolor=0x0A0A0C:shadowx=0:shadowy=5:shadowcolor=0x000000@0.55"
         )
@@ -132,13 +164,23 @@ def main():
 
     if a.tag:
         vf.append(
-            f"drawtext=fontfile={KUFI700}:text='{esc(a.tag)}':fontsize={tag_size}:"
+            f"drawtext=fontfile={KUFI700}:text='{esc(clean(a.tag))}':fontsize={tag_size}:"
             f"fontcolor=0xE9DFD2:x=w-text_w-{margin}:y={y}:"
             f"shadowx=0:shadowy=3:shadowcolor=0x000000@0.85"
         )
 
-    subprocess.run([FF, "-hide_banner", "-loglevel", "error", "-y", "-i", a.image,
-                    "-vf", ",".join(vf), "-frames:v", "1", "-q:v", "2", a.out], check=True)
+    if GRAD[0]:
+        # سلسلة الفلاتر الأساسية + طبقة التدرّج كمدخل تاني (بلا movie=)
+        chain = ",".join(x for x in vf)
+        cmd = [FF, "-hide_banner", "-loglevel", "error", "-y",
+               "-i", a.image, "-loop", "1", "-i", GRAD[0],
+               "-filter_complex",
+               f"[0:v]{chain}[base];[base][1:v]overlay=0:0:format=auto[v]",
+               "-map", "[v]", "-frames:v", "1", "-q:v", "2", a.out]
+    else:
+        cmd = [FF, "-hide_banner", "-loglevel", "error", "-y", "-i", a.image,
+               "-vf", ",".join(vf), "-frames:v", "1", "-q:v", "2", a.out]
+    subprocess.run(cmd, check=True)
     print(f"ثامبنيل: {a.out}  ({W}x{H}, عنوان {title_size}px, {len(title_lines)} سطر)")
 
 

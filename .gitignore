@@ -26,3 +26,10 @@ output/dl/*.jpg
 output/dl/*.mp3
 output/dl/shorts/*.mp4
 output/dl/shorts/*.jpg
+# الحلقة 2 — مخرجات كبيرة
+output/dl/rewayat-ep02.mp4
+output/dl/ثامبنيل-ep02.jpg
+output/dl/char-*.png
+output/dl/.grad.png
+assets/audio/ep02/tts/*.mp3
+episodes/*/_build/
