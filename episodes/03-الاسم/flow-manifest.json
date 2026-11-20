@@ -1,0 +1,208 @@
+{
+ "episode": 3,
+ "title": "الاسم",
+ "prefix": "rewayat-ep03",
+ "scenes": [
+  {
+   "scene": 1,
+   "title": "الاسم",
+   "chapter": "الاسم",
+   "image": "assets/images/ep03/scene-01.png",
+   "motion": "slow_zoom_in",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 3,
+   "prompt_ar": "Wide 16:9 cinematic film still: a lean Arab man in his early thirties with a black beard, deep tired eyes and a sand scarf raises both hands in refusal while a crowd of strangers reaches toward him, some touching his coat, others holding out radios and papers for him to sign, golden dawn light behind them, tents of a vast camp in the distance",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 2,
+   "title": "الراجل اللي طلع في الشرق",
+   "chapter": "الراجل اللي طلع في الشرق",
+   "image": "assets/images/ep03/scene-02.png",
+   "motion": "pan_right",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 2,
+   "prompt_ar": "Wide 16:9 cinematic film still at dawn: a single tall figure in a long pale robe standing motionless at the eastern edge of a huge tent camp, seen from far away as a silhouette against a rising sun, the ground around him untouched by footprints, a crowd of camp dwellers gathered at a distance watching, cold blue mist on the sand",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 3,
+   "title": "الإحصاء",
+   "chapter": "الإحصاء",
+   "image": "assets/images/ep03/scene-03.png",
+   "motion": "push_up",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 3,
+   "prompt_ar": "Wide 16:9 cinematic film still: three clerks in clean pale grey robes sitting at a long wooden table in the open air with thick ledgers and ink pots, writing as families queue before them, children separated into a second queue by a rope, grey overcast light, tents behind, the atmosphere orderly and wrong",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 4,
+   "title": "أم سلمى",
+   "chapter": "أم سلمى",
+   "image": "assets/images/ep03/scene-04.png",
+   "motion": "slow_zoom_out",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 4,
+   "prompt_ar": "Wide 16:9 cinematic film still: an older woman in a black headscarf sitting perfectly still on a wooden stool outside a tent, hands folded, face completely calm and empty, a young bearded man kneeling in front of her talking, the empty stool beside her, grey light, laundry line behind",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 5,
+   "title": "البوصلة",
+   "chapter": "البوصلة",
+   "image": "assets/images/ep03/scene-05.png",
+   "motion": "slow_zoom_in",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 2,
+   "prompt_ar": "Wide 16:9 cinematic film still: a brass compass held in a man's scarred hands, close up, the needle pointing away from north toward the right edge of frame, a blurry pale-robed figure standing far in the background in that direction, dusty ground, golden hour light",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 6,
+   "title": "الخيمة الفارغة",
+   "chapter": "الخيمة الفارغة",
+   "image": "assets/images/ep03/scene-06.png",
+   "motion": "push_up",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 2,
+   "prompt_ar": "Wide 16:9 cinematic film still: the interior of a huge empty tent, completely bare, a single oil lamp on the ground in the precise centre, canvas walls with no furniture, no carpets, no people, a young bearded man standing at the entrance silhouetted against the daylight, dust suspended in the air",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 7,
+   "title": "التوزيع",
+   "chapter": "التوزيع",
+   "image": "assets/images/ep03/scene-07.png",
+   "motion": "pan_left",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 2,
+   "prompt_ar": "Wide 16:9 cinematic film still: a cheerful open-air distribution line at a camp, people receiving bread and medicine with smiles, men in pale robes handing out sacks, and to one side a clerk marking names in a ledger with a red cord tying the pages, grey sky, warm lanterns",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 8,
+   "title": "الصوت المسروق",
+   "chapter": "الصوت المسروق",
+   "image": "assets/images/ep03/scene-08.png",
+   "motion": "slow_zoom_out",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 3,
+   "prompt_ar": "Wide 16:9 cinematic film still: a lean bearded man speaking into a small shortwave radio at night, and behind him on tall poles loudspeakers boom across the camp, his words coming back from a hundred directions, tents lit by lanterns, a crowd listening, oppressive scale",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 9,
+   "title": "الصوت",
+   "chapter": "الصوت",
+   "image": "assets/images/ep03/scene-09.png",
+   "motion": "slow_zoom_in",
+   "speakers": [
+    "ياسين",
+    "الرجل"
+   ],
+   "segments": 3,
+   "prompt_ar": "Wide 16:9 cinematic film still: a tall figure in a long pale robe standing face to face with a lean bearded man at the edge of a camp at night, the tall figure's face completely lost in a soft glow, one hand raised gently, the young man's radio held between them like an offering",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  },
+  {
+   "scene": 10,
+   "title": "الاسم التاني",
+   "chapter": "الاسم التاني",
+   "image": "assets/images/ep03/scene-10.png",
+   "motion": "slow_zoom_out",
+   "speakers": [
+    "ياسين"
+   ],
+   "segments": 3,
+   "prompt_ar": "Wide 16:9 cinematic film still at dawn: a young bearded man walking away from a vast tent camp toward an empty grey desert, a small radio in one hand, and on the canvas door of the nearest tent a name written in charcoal, the camp behind him silent and still, long shadow ahead of him",
+   "flow_settings": {
+    "model": "Omni Flash 1.2",
+    "aspect": "16:9",
+    "resolution": "720p",
+    "duration": "8s",
+    "outputs": 1,
+    "audio": "native, no dialogue"
+   }
+  }
+ ]
+}
