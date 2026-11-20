@@ -184,6 +184,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
 
 
+NEXT_LINE = {
+    1: "«اللي قال: أنا جيت أريّحكم»",
+    2: "«الراجل اللي طلع في الشرق»",
+}
+
+
+def next_line(scenes):
+    ep = scenes[0].get("episode", 1) if scenes else 1
+    return NEXT_LINE.get(ep, "الحلقة القادمة")
+
+
 def build_ass(scenes, total, out_path):
     lines = [ASS_HEAD.format(w=SUB_W, h=SUB_H)]
     for sc in scenes:
@@ -228,11 +239,88 @@ def build_ass(scenes, total, out_path):
     lines.append(
         f"Dialogue: 1,{fmt_ts(total-10)},{fmt_ts(total-1.5)},Title,,0,0,0,,{rtl('الحلقة القادمة')}{{\\fad(800,900)\\pos({SUB_W//2},200)\\fs44}}"
     )
+    nxt = next_line(scenes)
     lines.append(
-        f"Dialogue: 1,{fmt_ts(total-9.4)},{fmt_ts(total-1.5)},Small,,0,0,0,,{rtl('«اللي قال: أنا جيت أريّحكم»')}{{\\fad(800,900)\\pos({SUB_W//2},276)}}"
+        f"Dialogue: 1,{fmt_ts(total-9.4)},{fmt_ts(total-1.5)},Small,,0,0,0,,{rtl(nxt)}{{\\fad(800,900)\\pos({SUB_W//2},276)}}"
     )
     with open(out_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
+
+
+
+# ---------------------------------------------------------------- intro
+
+# ملاحظة: خط Noto مفيهوش علامات تنصيص ولا أقواس (بتطلع مربع فاضي) —
+# فالكلام مكتوب من غيرها، والفواصل العربية بتعمل الشغل.
+INTRO_LINES = [
+    ("الحلقة السابقة", "الملحمة بدأت، راجل عجوز في الراديو، وشارع كله بيبص لفوق"),
+    ("الحلقة دي", "ياسين خرج يدوّر على إجابة، ولقى فؤاد"),
+    ("وخد بالك", "فيه جملة واحدة في الحلقة دي، لو سمعتها هتفهم كل حاجة"),
+]
+
+
+def _dt(t):
+    """تهريب نص drawtext + تنظيف الرموز اللي الخط مش فيه (بتطلع مربع فاضي).
+
+    اتأكدنا بـ fontTools إن خطوط Noto هنا مفيهاش ولا علامة ترقيم لاتينية،
+    فالوقف بيبقى بالنقطة العربية ٫ (موجودة ومقروءة).
+    """
+    t = t.replace("…", "٫").replace(".", "٫")
+    for bad in ("«", "»", '"', "(", ")", "[", "]", "—", "–", "-", "•", ":", "،"):
+        t = t.replace(bad, "٬" if bad in ":،-—–" else "")
+    t = " ".join(t.split())
+    for ch in ("\\", "'", ":", "%"):
+        t = t.replace(ch, "\\" + ch)
+    return t
+
+
+def build_intro_card(out_path, seconds, w=W, h=H, fps=FPS):
+    """كارت تمهيدي (بلا صوت) — النص بيتحط بـ ffmpeg drawtext مش PIL.
+
+    PIL بيرسم الحروف العربية منفصلة ومقلوبة (مش بيعمل shaping)، فكل النص
+    العربي لازم يعدّي على libass/drawtext. هنا بنجهّز الخلفية PIL ونكتب
+    الكلام بـ drawtext + text_shaping=1.
+    """
+    from PIL import Image
+    import numpy as _np
+
+    img = Image.open(os.path.join(ROOT, "assets", "images", "ep02", "scene-02.png")).convert("RGB")
+    base = img.resize((w, h), Image.LANCZOS)
+    arr = _np.asarray(base).astype(_np.float32)
+    arr = arr * 0.16 + (_np.array([12, 13, 16], dtype=_np.float32) * 0.84)
+    Image.fromarray(arr.clip(0, 255).astype(_np.uint8)).save(out_path)
+
+    kufi = os.path.join(FONT_DIR, "NotoKufiArabic-900.ttf")
+    naskh = os.path.join(FONT_DIR, "NotoNaskhArabic-400.ttf")
+    y = int(h * 0.26)
+    vf = []
+    for head, body in INTRO_LINES:
+        vf.append(
+            f"drawtext=fontfile={kufi}:text='{_dt(head)}':fontsize=38:"
+            f"fontcolor=0xD8A24A:x=(w-text_w)/2:y={y}:text_shaping=1"
+        )
+        vf.append(
+            f"drawtext=fontfile={naskh}:text='{_dt(body)}':fontsize=42:"
+            f"fontcolor=0xE9E2D6:x=(w-text_w)/2:y={y+56}:text_shaping=1"
+        )
+        y += int(h * 0.185)
+
+    vf += [
+        f"zoompan=z='1.0+0.00030*on':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
+        f"d=1:s={w}x{h}:fps={fps}",
+        "setsar=1", "format=yuv420p",
+        f"fade=t=in:st=0:d=0.8", f"fade=t=out:st={max(seconds-0.8,0):.2f}:d=0.8",
+    ]
+    mp4 = out_path.replace(".png", ".mp4")
+    r = subprocess.run(
+        [FF, "-hide_banner", "-loglevel", "error", "-y", "-loop", "1", "-i", out_path,
+         "-t", f"{seconds:.2f}", "-r", str(fps), "-vf", ",".join(vf),
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+         "-pix_fmt", "yuv420p", mp4],
+        capture_output=True)
+    if r.returncode != 0:
+        print(r.stderr.decode("utf-8", "replace")[-800:])
+    return r.returncode == 0
 
 
 # ---------------------------------------------------------------- video
@@ -329,6 +417,7 @@ def main():
         sc["image"] = os.path.join(ROOT, sc["image_file"])
         sc["start"] = t
         sc["end"] = t + lead + d + tail
+        sc["episode"] = spec.get("episode", 1)
         t = sc["end"]
         scenes.append(sc)
 
@@ -340,6 +429,14 @@ def main():
     # ---- ترجمة
     ass = os.path.join(work, "subs.ass")
     build_ass(scenes, total, ass)
+
+    # ---- مقدمة تمهيدية (لو محددة في السكربت) — بتوسّع الفيلم فوق 8 دقايق
+    intro = float(spec.get("intro_seconds", 0) or 0)
+    if intro > 0 and not args.preview:
+        for sc in scenes:
+            sc["start"] += intro
+            sc["end"] += intro
+        total += intro
 
     # ---- الصوت: محرك احترافي (stems + ducking + EBU R128 mastering)
     print("[i] معالجة الصوت (voice stem → music stem → ducking → mastering)...")
@@ -366,6 +463,8 @@ def main():
         local = dict(sc)
         if not args.preview:
             local["_pad"] = XF      # هيتشال من الأخير بعد الحلقة
+        if intro > 0 and i == 1:
+            local["_pad"] = 0.0     # المقدمة بتوصل بقطع مش xfade
         if args.preview:
             local["_timings"] = [tt for tt in sc.get("_timings", []) if tt[0] < args.preview]
         if args.preview:
@@ -378,6 +477,18 @@ def main():
             scene_clip(local, out, preview=args.preview)
         clips.append(out)
         rendered.append(local)
+
+    if intro > 0 and not args.preview:
+        card_png = os.path.join(work, "intro.png")
+        ok = build_intro_card(card_png, intro)
+        if ok:
+            card_mp4 = card_png.replace(".png", ".mp4")
+            real = dur(card_mp4)          # المدة الفعلية بعد الرندر
+            clips.insert(0, card_mp4)
+            rendered.insert(0, {"start": 0.0, "end": real, "_pad": 0.0, "image": card_png})
+            print(f"[i] مقدمة {intro:.1f}s")
+        else:
+            print("[!] المقدمة فشلت — الفيلم هيكمل من غيرها")
 
     if len(rendered) > 1:
         rendered[-1]["_pad"] = 0.0      # الأخير مش محتاج مساحة انتقال
@@ -405,6 +516,14 @@ def main():
         run(cmd + ["-filter_complex", ";".join(parts), "-map", f"[{prev}]",
                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "19",
                    "-pix_fmt", "yuv420p", concat])
+
+    # ---- المدة النهائية = مجموع المقاطع الفعلية (بعد xfade) مش الحساب النظري
+    real_total = sum(sc["end"] - sc["start"] + sc.get("_pad", 0.0) for sc in rendered)
+    if len(rendered) > 1:
+        real_total -= XF * (len(rendered) - 1)
+    if abs(real_total - total) > 0.05:
+        print(f"[i] ضبط المدة: {total:.2f}s → {real_total:.2f}s")
+        total = real_total
 
     # ---- burn subs + audio
     print("[i] حرق الترجمة والتجميع النهائي...")

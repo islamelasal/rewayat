@@ -119,8 +119,17 @@ def main():
 
     title_lines = wrap(clean(a.title))
     title_size = fit_size(title_lines, KUFI900, max_w, int(88 * scale))
-    kicker_lines = wrap(clean(a.kicker)) if a.kicker else []
-    kicker_size = fit_size(kicker_lines, KUFI900, max_w, int(34 * scale)) if kicker_lines else 0
+    # الكيكر: سطر واحد إن أمكن — نصغّره بدل ما يتقسم ويركب على العنوان
+    kicker_txt = clean(a.kicker) if a.kicker else ""
+    kicker_lines = []
+    kicker_size = 0
+    if kicker_txt:
+        kicker_lines = [kicker_txt]
+        kicker_size = fit_size(kicker_lines, KUFI900, max_w, int(34 * scale))
+        # لو صغر أوي يبقى أطول من العرض → نقسمه سطرين بمقاس أكبر
+        if kicker_size < int(24 * scale):
+            kicker_lines = wrap(kicker_txt)
+            kicker_size = fit_size(kicker_lines, KUFI900, max_w, int(34 * scale))
     tag_size = fit_size([a.tag], KUFI700, max_w, int(34 * scale)) if a.tag else 0
 
     line_h = int(title_size * 1.22)

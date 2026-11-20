@@ -33,3 +33,6 @@ output/dl/char-*.png
 output/dl/.grad.png
 assets/audio/ep02/tts/*.mp3
 episodes/*/_build/
+output/dl/shorts-ep02/*.mp4
+output/dl/shorts-ep02/*.jpg
+output/dl/shorts-ep02/.grad.png

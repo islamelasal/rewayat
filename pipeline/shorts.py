@@ -19,8 +19,8 @@ import imageio_ffmpeg
 FF = imageio_ffmpeg.get_ffmpeg_exe()
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# (اسم, بداية, نهاية, كابشن الكوفر, نص فوق الكوفر)
-DEFAULT_SHORTS = [
+# (اسم, بداية, نهاية, كابشن الكوفر, نص فوق الكوفر, صورة الكوفر)
+DEFAULT_SHORTS_EP01 = [
     ("01-هوك",       7.20,  57.2,  "الملحمة بدأت", "سمع كلمة واحدة في الراديو",
      "assets/images/ep01/scene-01.png"),
     ("02-الملحمة",  539.0, 599.0,  "مئات وقفوا",   "وما حدش اتكلم",
@@ -28,6 +28,18 @@ DEFAULT_SHORTS = [
     ("03-خط-ذهبي",  784.0, 844.0,  "السما تتشقّق", "أول مرة",
      "assets/images/ep01/scene-10.png"),
 ]
+
+# الحلقة 2 — «الباب» (7:26). التوقيتات محسوبة من الـ timeline الفعلي.
+DEFAULT_SHORTS_EP02 = [
+    ("01-أنا-جيت-أريحكم", 128.9, 188.9, "أخطر جملة", "أربع كلمات بس",
+     "assets/images/ep02/scene-04.png"),
+    ("02-متسمعش-كلامه",   358.0, 418.0, "ستكون بابًا", "فؤاد قال له",
+     "assets/images/ep02/scene-09.png"),
+    ("03-أنا-كنت-الطريق", 388.0, 448.0, "أنت كنت الطريق", "الوداع",
+     "assets/images/ep02/scene-10.png"),
+]
+
+DEFAULT_SHORTS = DEFAULT_SHORTS_EP01
 
 
 def ffprobe_dur(path):
@@ -37,6 +49,53 @@ def ffprobe_dur(path):
             h, m, s = line.split("Duration:")[1].split(",")[0].strip().split(":")
             return int(h) * 3600 + int(m) * 60 + float(s)
     raise SystemExit("لا يمكن قراءة المدة")
+
+
+
+def _ts(x):
+    """ثواني → h:mm:ss.cc (صيغة ASS)."""
+    if x < 0:
+        x = 0.0
+    h = int(x // 3600)
+    m = int((x % 3600) // 60)
+    sec = x % 60
+    return f"{h}:{m:02d}:{sec:05.2f}"
+
+
+def shift_ass(txt, start, dur):
+    """يزحزح توقيتات الترجمة لنافذة الشورت ويقصّ اللي برّاها.
+
+    لازم: ffmpeg بينزّل الـ PTS لصفر بعد -ss، فلو سيبنا التوقيتات الأصلية
+    الترجمة بتظهر نص الفيلم غلط (كان بيحصل فعلًا: شورت من الدقيقة 6
+    بيطلع ترجمة المشهد الأول).
+    """
+    out = []
+    for line in txt.splitlines():
+        if not line.startswith("Dialogue:"):
+            out.append(line)
+            continue
+        try:
+            head, text = line.split(",", 9)[0:9], line.split(",", 9)[9]
+            f = line.split(",")
+            a = _parse_ts(f[1])
+            b = _parse_ts(f[2])
+        except Exception:
+            continue
+        a2, b2 = a - start, b - start
+        if b2 <= 0 or a2 >= dur:
+            continue
+        a2 = max(a2, 0.0)
+        b2 = min(b2, dur)
+        if b2 - a2 < 0.3:
+            continue
+        f[1], f[2] = _ts(a2), _ts(b2)
+        out.append(",".join(f))
+    return "\n".join(out)
+
+
+def _parse_ts(t):
+    h, m, sec = t.strip().split(":")
+    return int(h) * 3600 + int(m) * 60 + float(sec)
 
 
 def make_short(src, ass, start, dur, out, workdir):
@@ -54,7 +113,7 @@ def make_short(src, ass, start, dur, out, workdir):
         if not line.startswith("Dialogue:"):
             keep.append(line)
             continue
-        is_card = ",Title," in line or ",Small," in line
+        is_card = any(k in line for k in (",Title,", ",Small,", ",FouadName,"))
         if is_card:
             continue
         keep.append(line)
@@ -64,7 +123,22 @@ def make_short(src, ass, start, dur, out, workdir):
               .replace("PlayResY: 720", "PlayResY: 1920")
               .replace("\\pos(640,634)", "\\pos(540,1420)")
               .replace(",110,110,60,", ",50,50,200,")
-              .replace("Noto Naskh Arabic,32,", "Noto Naskh Arabic,46,"))
+              .replace("Noto Naskh Arabic,32,", "Noto Naskh Arabic,46,")
+              # كل السطور على 1080x1920 — الخط لازم يكبر مع الكانفس.
+              # 39px في 1280 عرض = 33px في 1080، وده صغير جدًا على الموبايل.
+              .replace(",Noto Naskh Arabic,39,", ",Noto Naskh Arabic,60,")
+              .replace(",Noto Naskh Arabic,33,", ",Noto Naskh Arabic,60,")
+              .replace(",Noto Kufi Arabic,25,", ",Noto Kufi Arabic,40,"))
+
+    # زحزحة التوقيتات على نافذة الشورت (بعد كل الفلترة)
+    txt = shift_ass(txt, start, dur)
+
+    # تأكيد نهائي: أي سطر ترجمة لازم يكون >= 56px عرض 1080
+    import re as _re
+    def _bump(m):
+        n = int(m.group(1))
+        return f",Noto Naskh Arabic,{max(n, 56)}," if n < 56 else m.group(0)
+    txt = _re.sub(r",Noto Naskh Arabic,(\d+),", _bump, txt)
 
     with open(short_ass, "w", encoding="utf-8") as f:
         f.write(txt)
@@ -114,7 +188,10 @@ def main():
 
     total = ffprobe_dur(a.video)
     made = []
-    for name, s, e, cap, kick, image in DEFAULT_SHORTS:
+    bank = DEFAULT_SHORTS
+    if "ep02" in os.path.basename(a.video).lower():
+        bank = DEFAULT_SHORTS_EP02
+    for name, s, e, cap, kick, image in bank:
         # اقصّر المدة لو النهاية تعدّي الفيديو
         dur = min(e, total - 0.5) - s
         if dur < 12:
