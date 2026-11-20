@@ -187,6 +187,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 NEXT_LINE = {
     1: "«اللي قال: أنا جيت أريّحكم»",
     2: "«الراجل اللي طلع في الشرق»",
+    3: "«اللي هييجي بعد كده… فيه حاجة غلط»",
 }
 
 

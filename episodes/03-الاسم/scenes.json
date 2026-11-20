@@ -1,0 +1,364 @@
+{
+ "series": "ساعة الرمادي",
+ "episode": 3,
+ "title_ar": "الراجل اللي طلع في الشرق",
+ "language": "ar",
+ "register": "فصحى",
+ "intro_seconds": 30,
+ "style_suffix": "Cinematic epic digital illustration, painterly realism, dramatic chiaroscuro lighting, muted teal-grey palette with ember-orange accents, heavy atmospheric haze, 35mm film grain, wide 16:9 cinematic composition, no text, no logos, no religious figures, no depiction of prophets or angels",
+ "characters": {
+  "yaseen": {
+   "name_ar": "ياسين",
+   "role": "الراوي والبطل",
+   "tags": "yaseen_main, long oval face, deep-set dark eyes, black beard with grey chin streak, thin scar on right temple, sand scarf, mud-brown coat"
+  }
+ },
+ "scenes": [
+  {
+   "id": 1,
+   "title_ar": "الاسم",
+   "chapter": "الاسم",
+   "mood": "tense",
+   "motion": "slow_zoom_in",
+   "image_prompt": "Wide 16:9 cinematic film still: a lean Arab man in his early thirties with a black beard, deep tired eyes and a sand scarf raises both hands in refusal while a crowd of strangers reaches toward him, some touching his coat, others holding out radios and papers for him to sign, golden dawn light behind them, tents of a vast camp in the distance",
+   "image_file": "assets/images/ep03/scene-01.png",
+   "lead": 1.0,
+   "tail": 1.8,
+   "sfx_ar": "همس جماعة، خطوات، جرس بعيد",
+   "music_ar": "درون منخفض + وتر متصاعد",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الصباح التالي، صار لي اسم لم أختره. الناس في المخيم لم يعودوا ينادونني ياسين، بل صاحب الراديو. كانوا يقفون أمام خيمتي قبل الفجر، ينتظرون كلمة واحدة، أي كلمة، كأنني أصبحت البئر التي يشرب منها الجميع.",
+     "audio": "assets/audio/ep03/tts/s01-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "أنا لا أملك شيئًا لأعطيه. أنا رجل حمل راديًا وقال جملة.",
+     "stage": "وهو يدفع الأيدي برفق",
+     "audio": "assets/audio/ep03/tts/s01-2.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "لم يسمعني أحد. والاسم، يا سادة، أثقل من الحجر: بمجرد أن يلصقه الناس بك، تصبح مسؤولًا عن كل ما يفعلونه باسمك.",
+     "audio": "assets/audio/ep03/tts/s01-3.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "title_ar": "الراجل اللي طلع في الشرق",
+   "chapter": "الراجل اللي طلع في الشرق",
+   "mood": "awe",
+   "motion": "pan_right",
+   "image_prompt": "Wide 16:9 cinematic film still at dawn: a single tall figure in a long pale robe standing motionless at the eastern edge of a huge tent camp, seen from far away as a silhouette against a rising sun, the ground around him untouched by footprints, a crowd of camp dwellers gathered at a distance watching, cold blue mist on the sand",
+   "image_file": "assets/images/ep03/scene-02.png",
+   "lead": 1.0,
+   "tail": 1.9,
+   "sfx_ar": "رياح ساكنة، صمت جماعة، خطوة واحدة",
+   "music_ar": "درون واسع + طبقة كريستالية",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الفجر الثالث، ظهر رجل عند الحد الشرقي للمخيم. لم يره أحد وهو يصل. لم يكن له أثر قدم على الرمل، ولم تكن معه قافلة ولا سيارة ولا حمار. كان واقفًا فقط، والناس تتجمّع حوله على بعد عشرين خطوة، وتتوقف.",
+     "audio": "assets/audio/ep03/tts/s02-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "وقفت أنا أيضًا. لم يكن وجهه واضحًا، لا لأن الضوء خلفه، بل لأن الناس لم يستطيعوا أن يصفوه. سألت عشرة أشخاص في ذلك اليوم كيف يبدو، فأعطوني عشرة أوصاف مختلفة.",
+     "audio": "assets/audio/ep03/tts/s02-2.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "title_ar": "الإحصاء",
+   "chapter": "الإحصاء",
+   "mood": "tense",
+   "motion": "push_up",
+   "image_prompt": "Wide 16:9 cinematic film still: three clerks in clean pale grey robes sitting at a long wooden table in the open air with thick ledgers and ink pots, writing as families queue before them, children separated into a second queue by a rope, grey overcast light, tents behind, the atmosphere orderly and wrong",
+   "image_file": "assets/images/ep03/scene-03.png",
+   "lead": 1.0,
+   "tail": 1.8,
+   "sfx_ar": "قلم على ورق، همس أسماء، صمت طابور",
+   "music_ar": "درون منخفض + نبض منتظم",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في اليوم الثاني، نصبوا طاولة في وسط الساحة، وجلس عليها ثلاثة كتّاب، وبدأوا يكتبون الأسماء. كل عائلة تمرّ، يقولون اسم الأب، والأم، والأولاد، فيكتبون. كان المنظر مرتّبًا، منظّمًا، هادئًا. وهذا بالضبط ما جعلني أخاف.",
+     "audio": "assets/audio/ep03/tts/s03-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "ولماذا الأولاد في صفّ آخر؟",
+     "stage": "يسأل أحد الكتّاب",
+     "audio": "assets/audio/ep03/tts/s03-2.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "رفع رأسه، ونظر إليّ نظرة طويلة، ثم قال جملة لن أنساها: لأن الأولاد هم من يُعطى، لا من يُؤخذ منه.",
+     "audio": "assets/audio/ep03/tts/s03-3.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "title_ar": "أم سلمى",
+   "chapter": "أم سلمى",
+   "mood": "tense",
+   "motion": "slow_zoom_out",
+   "image_prompt": "Wide 16:9 cinematic film still: an older woman in a black headscarf sitting perfectly still on a wooden stool outside a tent, hands folded, face completely calm and empty, a young bearded man kneeling in front of her talking, the empty stool beside her, grey light, laundry line behind",
+   "image_file": "assets/images/ep03/scene-04.png",
+   "lead": 1.0,
+   "tail": 1.9,
+   "sfx_ar": "قماش، رياح خفيفة، سكوت طويل",
+   "music_ar": "درون حزين + جرس خافت",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "بحثت عن أم سلمى. كانت امرأة خمسينية، فقدت زوجها وابنها في الطريق إلينا، وكنت أسمعها تبكي كل ليلة. في هذا اليوم، وجدتها جالسة أمام خيمتها، ساكنة، نظيفة، وقد مشّطت شعرها. ابتسمت لي.",
+     "audio": "assets/audio/ep03/tts/s04-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "أم سلمى... كيف حالك؟",
+     "stage": "وأنا أخفض صوتي",
+     "audio": "assets/audio/ep03/tts/s04-2.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "أنا بخير يا ابني. ما عدت أتعب.",
+     "stage": "بصوت هادئ جدًا",
+     "audio": "assets/audio/ep03/tts/s04-3.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "وسألتها عن ابنها، فقالت اسمه بهدوء، كأنها تقرأ اسمًا في كتاب. وقلبي انقبض، لأن الحزن الذي يختفي لا يُشفى، بل يُنقل إلى مكان آخر.",
+     "audio": "assets/audio/ep03/tts/s04-4.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "title_ar": "البوصلة",
+   "chapter": "البوصلة",
+   "mood": "awe",
+   "motion": "slow_zoom_in",
+   "image_prompt": "Wide 16:9 cinematic film still: a brass compass held in a man's scarred hands, close up, the needle pointing away from north toward the right edge of frame, a blurry pale-robed figure standing far in the background in that direction, dusty ground, golden hour light",
+   "image_file": "assets/images/ep03/scene-05.png",
+   "lead": 1.0,
+   "tail": 1.9,
+   "sfx_ar": "معدن، تنفّس، رياح بعيدة",
+   "music_ar": "درون متوتر + نغمة عالية",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "أخرجت بوصلة فؤاد من جيبي. كانت آخر شيء تركه لي. في تلك الليلة التي اختفى فيها، وقفت العقرب على الشمال، أول مرة منذ عرفتها. لكن في هذا الصباح، أخذتها بيدي، ووقفت في وسط الساحة، فدار العقرب ببطء، وترك الشمال، واتجه شرقًا.",
+     "audio": "assets/audio/ep03/tts/s05-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "أدرت جسمي. دار العقرب معي. ثم توقفت، وثبت على نقطة واحدة: الرجل ذو الرداء الفاتح، واقفًا على بعد مئتي خطوة. فتحت البوصلة مرة أخرى، وقلبتها، ونظرت إلى ما تحت الإبرة، فوجدت خدشًا صغيرًا على النحاس، حفرته يد بشرية: كلمة واحدة. لا تُصدّقه.",
+     "audio": "assets/audio/ep03/tts/s05-2.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "title_ar": "الخيمة الفارغة",
+   "chapter": "الخيمة الفارغة",
+   "mood": "tense",
+   "motion": "push_up",
+   "image_prompt": "Wide 16:9 cinematic film still: the interior of a huge empty tent, completely bare, a single oil lamp on the ground in the precise centre, canvas walls with no furniture, no carpets, no people, a young bearded man standing at the entrance silhouetted against the daylight, dust suspended in the air",
+   "image_file": "assets/images/ep03/scene-06.png",
+   "lead": 1.0,
+   "tail": 2.0,
+   "sfx_ar": "صمت مطلق، قماش يتنفّس، زيت يحترق",
+   "music_ar": "درون شبه صامت + جرس واحد",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الليلة التالية، دخلت الخيمة الكبيرة. لم يكن هناك حارس، ولا باب موصَد، ولا صفّ. رفعت القماش ودخلت، ووقفت. كانت الخيمة فارغة تمامًا. لا سجاد، ولا كراسي، ولا ماء، ولا رجل. مصباح زيت واحد في وسط الأرض، مضاء، ولا أحد حوله.",
+     "audio": "assets/audio/ep03/tts/s06-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "خرجت وأنا أرتجف. كل هؤلاء الناس دخلوا هنا. كلهم. فإلى أين ذهبوا؟",
+     "audio": "assets/audio/ep03/tts/s06-2.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "title_ar": "التوزيع",
+   "chapter": "التوزيع",
+   "mood": "tense",
+   "motion": "pan_left",
+   "image_prompt": "Wide 16:9 cinematic film still: a cheerful open-air distribution line at a camp, people receiving bread and medicine with smiles, men in pale robes handing out sacks, and to one side a clerk marking names in a ledger with a red cord tying the pages, grey sky, warm lanterns",
+   "image_file": "assets/images/ep03/scene-07.png",
+   "lead": 1.0,
+   "tail": 1.8,
+   "sfx_ar": "ضحك بعيد، أكياس ورق، ختم على ورق",
+   "music_ar": "درون دافئ + طبقة عالية خفيفة",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الصباح، وزّعوا الخبز والدواء. بلا مقابل، بلا طابور طويل، بلا أوامر. الناس كانت تضحك، والأطفال يجمعون الأكياس الفارغة، ورجل عجوز قبّل يد أحد الموزّعين. رأيت هذا كله، وقلت لنفسي: ربما أنا المخطئ. ربما الخير خير، أياً كان صاحبه.",
+     "audio": "assets/audio/ep03/tts/s07-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "ثم رأيت الكاتب. كان يكتب الأسماء في دفتر، وعند كل اسم يضع خطًا، ثم يربط الصفحة بخيط أحمر. سألته: ما هذا؟ قال: هذا سِجلّ. قلت: سجلّ ماذا؟ قال: سجلّ من أخذ.",
+     "audio": "assets/audio/ep03/tts/s07-2.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "title_ar": "الصوت المسروق",
+   "chapter": "الصوت المسروق",
+   "mood": "tense",
+   "motion": "slow_zoom_out",
+   "image_prompt": "Wide 16:9 cinematic film still: a lean bearded man speaking into a small shortwave radio at night, and behind him on tall poles loudspeakers boom across the camp, his words coming back from a hundred directions, tents lit by lanterns, a crowd listening, oppressive scale",
+   "image_file": "assets/images/ep03/scene-08.png",
+   "lead": 1.0,
+   "tail": 2.0,
+   "sfx_ar": "مكبّر صوت يطنّ، صدى، همس جماعة",
+   "music_ar": "درون متصاعد + صدى صناعي",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في تلك الليلة، تكلمت في الراديو. قلت للناس: لا تُسلّموا أسماء أولادكم لأحد. قلت: الراحة التي تُطلب منك مقابل شيء، ليست راحة. قلت: اسألوا من يعطيكم، ماذا يريد في المقابل.",
+     "audio": "assets/audio/ep03/tts/s08-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "وفي الصباح، سمعت صوتي يعود إليّ من مكبّرات الصوت في كل زاوية من المخيم. لكن الجملة لم تكن جملتي. كانوا يقولون: لا تُسلّموا أسماء أولادكم... لأحد، إلا لمن يحبّكم. اسألوا من يعطيكم... واشكروا.",
+     "audio": "assets/audio/ep03/tts/s08-2.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "هم يقطعون كلامي، ويُكملونه بكلامهم. وأنا لا أستطيع أن أمنعهم، لأنهم سمعوا صوتي قبل أن يسمعوا كلامي.",
+     "stage": "بمرارة",
+     "audio": "assets/audio/ep03/tts/s08-3.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "title_ar": "الصوت",
+   "chapter": "الصوت",
+   "mood": "awe",
+   "motion": "slow_zoom_in",
+   "image_prompt": "Wide 16:9 cinematic film still: a tall figure in a long pale robe standing face to face with a lean bearded man at the edge of a camp at night, the tall figure's face completely lost in a soft glow, one hand raised gently, the young man's radio held between them like an offering",
+   "image_file": "assets/images/ep03/scene-09.png",
+   "lead": 1.1,
+   "tail": 2.2,
+   "sfx_ar": "رياح ساكنة، طنين خفيف، قلب",
+   "music_ar": "درون يعلو + جرس طويل",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في الليلة الأخيرة، جاء إليّ. لم أسمعه يقترب، لكنني شعرت به، كمن يشعر بباب يُفتح في غرفة مغلقة. وقف أمامي، ورفع يده، وقال جملة واحدة، بصوت هادئ، دافئ، يعرف اسمي.",
+     "audio": "assets/audio/ep03/tts/s09-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "الرجل",
+     "text": "أنت تعبت يا ياسين. لا بأس أن تستريح.",
+     "stage": "صوت عميق هادئ، يشبه صوتًا آخر",
+     "audio": "assets/audio/ep03/tts/s09-2.mp3",
+     "voice": "voice-02"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "وتجمّدت. لأن الصوت، يا سادة، كان يشبه صوت فؤاد. ليس هو، بل يشبهه، كأن أحدًا سمع فؤادًا مرة واحدة، وحاول أن يقلّده. أغمضت عيني، وقلت في نفسي: هذا هو الامتحان. ليس السيف. الصوت.",
+     "audio": "assets/audio/ep03/tts/s09-3.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "title_ar": "الاسم التاني",
+   "chapter": "الاسم التاني",
+   "mood": "awe",
+   "motion": "slow_zoom_out",
+   "image_prompt": "Wide 16:9 cinematic film still at dawn: a young bearded man walking away from a vast tent camp toward an empty grey desert, a small radio in one hand, and on the canvas door of the nearest tent a name written in charcoal, the camp behind him silent and still, long shadow ahead of him",
+   "image_file": "assets/images/ep03/scene-10.png",
+   "lead": 1.2,
+   "tail": 3.0,
+   "sfx_ar": "رياح تعلو، خطوات على رمل، جرس بعيد",
+   "music_ar": "درون يعلو إلى نغمة كبرى",
+   "segments": [
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "لم أستطع أن أقول لا. ليس لأنني خفت، بل لأنني لم أكن أعرف كيف أقولها. فقلت شيئًا آخر. قلت: أعطني ليلة واحدة. وأعطاني.",
+     "audio": "assets/audio/ep03/tts/s10-1.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "narration",
+     "speaker": "ياسين",
+     "text": "في تلك الليلة، كتبت اسمي بالفحم على باب خيمتي. ثم أخذت راديوي، وحقيبة فؤاد، وخرجت من المخيم قبل الفجر، ومشيت في الصحراء حتى اختفت الخيام خلفي.",
+     "audio": "assets/audio/ep03/tts/s10-2.mp3",
+     "voice": "voice-01"
+    },
+    {
+     "kind": "dialogue",
+     "speaker": "ياسين",
+     "text": "الاسم الذي يعطونه لك، يمكنهم أن يأخذوه. أما الاسم الذي تكتبه بنفسك... فهذا لا يأخذه أحد.",
+     "stage": "وحده، في الصحراء",
+     "audio": "assets/audio/ep03/tts/s10-3.mp3",
+     "voice": "voice-01"
+    }
+   ]
+  }
+ ]
+}

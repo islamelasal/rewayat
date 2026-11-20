@@ -198,8 +198,16 @@ def build(scenes, total, out_path, plan=None, sr=SR):
     """يبني شريط المؤثرات كامل الطول (ستيريو) على التايم لاين."""
     if plan is None:
         ids = {str(s["id"]) for s in scenes}
-        plan = DEFAULT_PLAN_EP02 if "10" in ids and len(scenes) == 10 and \
-            any(s.get("segments") for s in scenes) else DEFAULT_PLAN
+        has_segs = any(s.get("segments") for s in scenes)
+        ep = scenes[0].get("episode", 1) if scenes else 1
+        if not has_segs:
+            plan = DEFAULT_PLAN
+        elif ep == 3:
+            plan = DEFAULT_PLAN_EP03
+        elif ep == 2:
+            plan = DEFAULT_PLAN_EP02
+        else:
+            plan = DEFAULT_PLAN
     n_total = int(total * sr)
     acc = np.zeros(n_total)
     by_id = {str(s["id"]): s for s in scenes}
@@ -255,3 +263,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# الحلقة 3 — «الاسم». المؤثرات على mood كل مشهد:
+#   1 زحام/جرس    2 فراغ شرقي/رياح    3 أقلام وورق    4 سكوت/قماش
+#   5 معدن البوصلة  6 خيمة فارغة      7 توزيع/دافئ    8 مكبّرات صوت
+#   9 رياح ساكنة/طنين   10 خطوات/رياح
+DEFAULT_PLAN_EP03 = [
+    ("bell",    1,  0.8, -35),   # جرس بعيد وسط الزحام
+    ("wind",    2,  0.0, -34),   # فراغ الحد الشرقي
+    ("drone",   2,  0.0, -35),
+    ("bell",    3,  1.5, -36),   # قلم/طاولة الكتّاب
+    ("wind",    4,  0.0, -36),   # سكوت أم سلمى
+    ("bell",    5,  0.5, -33),   # معدن البوصلة
+    ("drone",   6,  0.0, -38),   # الخيمة الفارغة — أهدأ نقطة في الحلقة
+    ("bell",    7,  2.0, -34),   # دافئ
+    ("wind",    7,  0.0, -36),
+    ("thunder", 8,  3.0, -32),   # مكبّرات الصوت
+    ("drone",   9,  0.0, -34),
+    ("bell",    9,  8.0, -31),
+    ("wind",    10, 0.0, -33),
+    ("bell",    10, 12.0, -32),
+]
