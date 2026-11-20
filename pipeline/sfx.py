@@ -170,9 +170,36 @@ DEFAULT_PLAN = [
 ]
 
 
+# خطة الحلقة الثانية — موضوعة على mood كل مشهد، مش تخمين:
+#   مشهد 1 راديو/ليل    2 فؤاد يصلح جهاز    3 صحراء/قافلة
+#   4 نار البئر         5 وادي/ليلة          6 مخيم/ضوء
+#   7 مطر رمادي         8 خيمة/سكوت          9 باب/ضوء ساطع   10 شروق/خط ذهبي
+DEFAULT_PLAN_EP02 = [
+    ("radio",   1,  0.0, -36),   # مؤشر الراديو وهو بيتكلم
+    ("wind",    1,  0.0, -34),   # رياح برّه الشباك
+    ("bell",    2,  1.2, -35),   # رنّة معدن خفيفة (مفك على راديو)
+    ("wind",    3,  0.0, -33),   # صحراء مفتوحة
+    ("drone",   3,  0.0, -32),   # اتساع الطريق
+    ("thunder", 4,  1.0, -31),   # بعيد، مع كلام فؤاد
+    ("wind",    5,  0.0, -35),   # وادي بالليل
+    ("drone",   6,  0.0, -33),   # خيمة/رهبة
+    ("bell",    6,  2.0, -36),
+    ("wind",    7,  0.0, -32),   # المطر الرمادي (نغمي، مش نويز)
+    ("drone",   8,  0.0, -34),   # سكوت الاختيار
+    ("thunder", 9,  2.0, -29),   # الباب
+    ("bell",    9,  6.0, -33),
+    ("thunder", 10, 1.0, -28),   # الشروق
+    ("bell",    10, 8.0, -30),
+    ("bell",    10, 26.0, -32),
+]
+
+
 def build(scenes, total, out_path, plan=None, sr=SR):
     """يبني شريط المؤثرات كامل الطول (ستيريو) على التايم لاين."""
-    plan = plan or DEFAULT_PLAN
+    if plan is None:
+        ids = {str(s["id"]) for s in scenes}
+        plan = DEFAULT_PLAN_EP02 if "10" in ids and len(scenes) == 10 and \
+            any(s.get("segments") for s in scenes) else DEFAULT_PLAN
     n_total = int(total * sr)
     acc = np.zeros(n_total)
     by_id = {str(s["id"]): s for s in scenes}
