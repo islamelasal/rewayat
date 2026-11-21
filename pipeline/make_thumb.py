@@ -119,6 +119,9 @@ def main():
 
     title_lines = wrap(clean(a.title))
     title_size = fit_size(title_lines, KUFI900, max_w, int(88 * scale))
+    # هامش أمان 6٪ إضافي: المتريكس اللي بنقيس بيها مش متطابقة ١٠٠٪ مع رسم
+    # ffmpeg، والزيادة بتتقطّع من اليمين لأن النص RTL.
+    title_size = max(24, int(title_size * 0.94))
     # الكيكر: سطر واحد إن أمكن — نصغّره بدل ما يتقسم ويركب على العنوان
     kicker_txt = clean(a.kicker) if a.kicker else ""
     kicker_lines = []
@@ -156,7 +159,7 @@ def main():
             f"drawtext=fontfile={KUFI900}:text='{esc(clean(line))}':fontsize={kicker_size}:"
             f"fontcolor=0xD8A24A:x=w-text_w-{margin}:"
             f"y={y + i * int(kicker_size * 1.3)}:"
-            f"shadowx=0:shadowy=3:shadowcolor=0x000000@0.8"
+            f"shadowx=0:shadowy=3:shadowcolor=0x000000@0.8:text_shaping=1"
         )
     if kicker_lines:
         y += len(kicker_lines) * int(kicker_size * 1.3) + int(8 * scale)
@@ -167,7 +170,8 @@ def main():
         vf.append(
             f"drawtext=fontfile={KUFI900}:text='{esc(clean(line))}':fontsize={title_size}:"
             f"fontcolor=0xF6F1E9:x=w-text_w-{margin}:y={ly}:"
-            f"borderw=3:bordercolor=0x0A0A0C:shadowx=0:shadowy=5:shadowcolor=0x000000@0.55"
+            f"borderw=3:bordercolor=0x0A0A0C:shadowx=0:shadowy=5:shadowcolor=0x000000@0.55:"
+            f"text_shaping=1"
         )
     y += len(title_lines) * line_h + int(10 * scale)
 
@@ -175,7 +179,7 @@ def main():
         vf.append(
             f"drawtext=fontfile={KUFI700}:text='{esc(clean(a.tag))}':fontsize={tag_size}:"
             f"fontcolor=0xE9DFD2:x=w-text_w-{margin}:y={y}:"
-            f"shadowx=0:shadowy=3:shadowcolor=0x000000@0.85"
+            f"shadowx=0:shadowy=3:shadowcolor=0x000000@0.85:text_shaping=1"
         )
 
     if GRAD[0]:

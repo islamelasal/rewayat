@@ -39,6 +39,15 @@ DEFAULT_SHORTS_EP02 = [
      "assets/images/ep02/scene-10.png"),
 ]
 
+DEFAULT_SHORTS_EP03 = [
+    ("01-الأولاد-في-صف-تاني", 100.0, 160.0, "الأولاد في صف تاني", "ليه يا ترى؟",
+     "assets/images/ep03/scene-03.png"),
+    ("02-صوتي-رجع-بكلامهم",   318.0, 378.0, "صوته رجع له", "بكلام مش بتاعه",
+     "assets/images/ep03/scene-08.png"),
+    ("03-اكتب-اسمك-بنفسك",    407.0, 467.0, "اكتب اسمك بنفسك", "محدش ياخده",
+     "assets/images/ep03/scene-10.png"),
+]
+
 DEFAULT_SHORTS = DEFAULT_SHORTS_EP01
 
 
@@ -121,7 +130,9 @@ def make_short(src, ass, start, dur, out, workdir):
 
     txt = (txt.replace("PlayResX: 1280", "PlayResX: 1080")
               .replace("PlayResY: 720", "PlayResY: 1920")
-              .replace("\\pos(640,634)", "\\pos(540,1420)")
+              # الارتفاع بيتغيّر (642/634/578) فمينفعش نطابق رقم ثابت —
+              # كان بيسبّب إن الترجمة تفضل في نص الشاشة بدل تحت.
+              .replace("\\pos(640,", "\\pos(540,SAFEY)")
               .replace(",110,110,60,", ",50,50,200,")
               .replace("Noto Naskh Arabic,32,", "Noto Naskh Arabic,46,")
               # كل السطور على 1080x1920 — الخط لازم يكبر مع الكانفس.
@@ -129,6 +140,21 @@ def make_short(src, ass, start, dur, out, workdir):
               .replace(",Noto Naskh Arabic,39,", ",Noto Naskh Arabic,60,")
               .replace(",Noto Naskh Arabic,33,", ",Noto Naskh Arabic,60,")
               .replace(",Noto Kufi Arabic,25,", ",Noto Kufi Arabic,40,"))
+
+    # y السليم على 1080×1920: الترجمة تحت (1420)، اسم فؤاد فوقها (1330)
+    # بعد الاستبدال فوق بقى عندنا "\\pos(540,SAFEY)642)}" — بنرمي الرقم
+    # القديم بالكامل ونحط y الصح. (الرقم القديم كان 642/634/578)
+    out_lines = []
+    for ln in txt.splitlines():
+        if ln.startswith("Dialogue:") and "SAFEY" in ln:
+            i = ln.index("SAFEY")
+            k = ln.rindex("\\pos(", 0, i) + 5      # أول رقم في pos
+            e = ln.index(")}", i) + 1              # بعد الأقواس القديمة
+            tag = ln.split(",")[3] if len(ln.split(",")) > 3 else ""
+            y = 1330 if tag == "FouadName" else 1420
+            ln = ln[:k] + "540,%d)" % y + ln[e:]
+        out_lines.append(ln)
+    txt = "\n".join(out_lines)
 
     # زحزحة التوقيتات على نافذة الشورت (بعد كل الفلترة)
     txt = shift_ass(txt, start, dur)
@@ -189,7 +215,10 @@ def main():
     total = ffprobe_dur(a.video)
     made = []
     bank = DEFAULT_SHORTS
-    if "ep02" in os.path.basename(a.video).lower():
+    base = os.path.basename(a.video).lower()
+    if "ep03" in base:
+        bank = DEFAULT_SHORTS_EP03
+    elif "ep02" in base:
         bank = DEFAULT_SHORTS_EP02
     for name, s, e, cap, kick, image in bank:
         # اقصّر المدة لو النهاية تعدّي الفيديو
