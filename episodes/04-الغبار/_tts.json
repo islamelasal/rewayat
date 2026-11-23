@@ -222,17 +222,17 @@
  {
   "scene": 6,
   "i": 6,
-  "file": "assets/audio/ep04/tts/s06-5.mp3",
+  "file": "assets/audio/ep04/tts/s06-6.mp3",
   "speaker": "ياسين",
   "voice": "voice-01",
   "kind": "narration",
-  "chars": 141,
-  "text": "وسألته: لو كتبت عن الجميع، فأين الحق؟ فقال: الحق ليس في الدفتر يا ياسين. الدفتر بيان. والحق شيء يُصنع بعد أن يُقرأ البيان، أو لا يُصنع أبدًا."
+  "chars": 37,
+  "text": "وسألته: لو كتبت عن الجميع، فأين الحق؟"
  },
  {
   "scene": 6,
   "i": 7,
-  "file": "assets/audio/ep04/tts/s06-6.mp3",
+  "file": "assets/audio/ep04/tts/s06-7.mp3",
   "speaker": "ياسين",
   "voice": "voice-01",
   "kind": "dialogue",
@@ -242,7 +242,7 @@
  {
   "scene": 6,
   "i": 8,
-  "file": "assets/audio/ep04/tts/s06-7.mp3",
+  "file": "assets/audio/ep04/tts/s06-8.mp3",
   "speaker": "الرجل الثاني",
   "voice": "voice-02",
   "kind": "dialogue",
