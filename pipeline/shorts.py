@@ -48,6 +48,15 @@ DEFAULT_SHORTS_EP03 = [
      "assets/images/ep03/scene-10.png"),
 ]
 
+DEFAULT_SHORTS_EP04 = [
+    ("01-أثر-قبل-ما-تخطي", 83.0, 143.0, "أثره قبل ما يخطي", "في مكان ما مشي فيه",
+     "assets/images/ep04/scene-02.png"),
+    ("02-الرمل-قال-لي",   183.0, 243.0, "الرمل قال لي", "عرف اسمه",
+     "assets/images/ep04/scene-04.png"),
+    ("03-كل-أثر-هيتقرا-غلط", 458.0, 518.0, "كل أثر هيتقرا غلط", "اكتبه انت بنفسك",
+     "assets/images/ep04/scene-10.png"),
+]
+
 DEFAULT_SHORTS = DEFAULT_SHORTS_EP01
 
 
@@ -216,7 +225,9 @@ def main():
     made = []
     bank = DEFAULT_SHORTS
     base = os.path.basename(a.video).lower()
-    if "ep03" in base:
+    if "ep04" in base:
+        bank = DEFAULT_SHORTS_EP04
+    elif "ep03" in base:
         bank = DEFAULT_SHORTS_EP03
     elif "ep02" in base:
         bank = DEFAULT_SHORTS_EP02
