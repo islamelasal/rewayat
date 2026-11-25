@@ -84,6 +84,14 @@ def assemble_scene(sc, out_wav, sr=SR, default_pre=0.12, default_post=0.40):
             missing.append(ap)
             continue
         x = fade(trim(decode(full, sr)), sr=sr)
+        # تطبيع لكل مقطع على حدة — بدون كده مقطع هادي في مشهد صاخب يفضل مدفون
+        # (حصل فعلًا: s04-3 في ح4 و s06-4 في ح2 كانوا أهدى بـ19 dB)
+        seg_rms = float(np.sqrt(np.mean(x.astype(np.float64) ** 2))) or 1e-9
+        target_rms = 10 ** (-20.0 / 20.0)      # ≈ −20 dBFS RMS
+        x = x * (target_rms / seg_rms)
+        pk = float(np.max(np.abs(x))) or 1.0
+        if pk > 0.92:                           # امنع القص
+            x = x * (0.92 / pk)
         parts.append(x)
         timings.append((t, t + len(x) / sr, seg))
         t += len(x) / sr

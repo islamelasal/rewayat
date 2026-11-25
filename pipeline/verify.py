@@ -4,6 +4,7 @@
   python pipeline/verify.py episodes/02-الباب/scenes.json [--min-img 1024]
 """
 import argparse
+import statistics
 import json
 import os
 import subprocess
@@ -39,6 +40,19 @@ def audio_stats(path):
     return dur, rms
 
 
+
+def audio_stats_window(path, a, b):
+    """RMS لنافذة زمنية [a,b] داخل ملف WAV — بعد التجميع."""
+    raw = subprocess.run([FF, "-hide_banner", "-loglevel", "error", "-ss", f"{a:.3f}",
+                          "-to", f"{b:.3f}", "-i", path, "-ac", "1", "-ar", "16000",
+                          "-f", "s16le", "-"], capture_output=True).stdout
+    if not raw:
+        return 0.0, -99.0
+    x = np.frombuffer(raw, dtype="<i2").astype(np.float32) / 32768.0
+    rms = 20 * np.log10(max(float(np.sqrt((x ** 2).mean())), 1e-9))
+    return len(x) / 16000.0, rms
+
+
 def check_image(path, min_w):
     try:
         from PIL import Image
@@ -61,6 +75,7 @@ def main():
     spec = json.load(open(a.spec, encoding="utf-8"))
     problems, warnings = [], []
     total_speech = 0.0
+    levels = []          # (اسم الملف, RMS) — لفحص توازن المقاطع
 
     print("=" * 74)
     print(f"{'#':>3} {'مشهد':<26} {'صورة':<12} {'مقاطع':>6} {'كلام':>8}  حالة")
@@ -84,6 +99,7 @@ def main():
                 continue
             d, rms = audio_stats(p)
             speech += d
+            levels.append((os.path.basename(p), rms))
             if d < 0.35:
                 quiet.append((os.path.basename(p), f"قصير {d:.2f}s"))
             elif rms < -45:
@@ -99,6 +115,46 @@ def main():
 
     print("=" * 74)
     print(f"إجمالي الكلام: {total_speech/60:.2f} دقيقة")
+
+    # ---- توازن المقاطع داخل المشهد: نقيس *بعد التجميع* مش ملف الـmp3 الخام.
+    # التركيب (dialogue.assemble_scene) بيطبّع كل مقطع على حدة، فالملف الخام
+    # الهادي مش مشكلة بحد ذاته. اللي يهم إن المقاطع تطلع متساوية في المشهد.
+    # (قبل الإصلاح: s04-3 كان -39.5dB خام وفضل مدفون -19dB في الفيلم.)
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import dialogue as _dlg
+        import tempfile
+        import wave
+        sunk_all = []
+        for sc in spec["scenes"]:
+            if not sc.get("segments") or len(sc["segments"]) < 2:
+                continue
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tf:
+                tmp = tf.name
+            try:
+                _d, timings = _dlg.assemble_scene(sc, tmp)
+                lv = []
+                for a, b, seg in timings:
+                    d, r = audio_stats_window(tmp, a, b)
+                    lv.append((os.path.basename(seg.get("audio") or "?"), r))
+                if len(lv) >= 2:
+                    m = statistics.median(r for _, r in lv)
+                    if m > -60:
+                        for n, r in lv:
+                            if r < m - 8:
+                                sunk_all.append((sc["id"], n, r, m))
+            finally:
+                os.unlink(tmp)
+        if sunk_all:
+            print(f"\n✗ مشاهد غير متوازنة ({len(sunk_all)}) — مقطع أهدى بـ8dB+ بعد التجميع:")
+            for sid, n, r, m in sunk_all:
+                print(f"   • مشهد {sid}: {n}  {r:.1f} dB (وسيط المشهد {m:.1f})")
+                problems.append(f"مشهد {sid}: مقطع مدفون {n} ({r:.1f} dB)")
+        else:
+            print("✓ كل المقاطع متوازنة داخل مشاهدها (بعد التجميع)")
+    except Exception as e:                                   # noqa: BLE001
+        print(f"[!] تعذّر فحص التوازن: {type(e).__name__}: {e}")
+
     if warnings:
         print(f"\n⚠ تحذيرات ({len(warnings)}):")
         for w in warnings:
